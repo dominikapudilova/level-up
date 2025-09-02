@@ -11,6 +11,7 @@
     </header>
     <hr>
     <ul class="p-4 sm:space-y-2 space-y-1">
+        <li><x-button-dark class="w-full" :href="route('kiosk.create')">{{ __('Start lesson') }}</x-button-dark></li>
         <li><x-nav-link class="" :href="route('dashboard')" :active="request()->routeIs('dashboard')">{{ __('Dashboard') }}</x-nav-link></li>
         <li><x-nav-link class="" :href="route('dashboard')" :active="request()->routeIs('/')">{{ __('My students') }}</x-nav-link></li>
         @can('admin')

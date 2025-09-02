@@ -9,22 +9,24 @@
 
     <x-cover-image/>
 
-    <div class=" -mt-14 sm:mx-10 mx-4 p-4 bg-white bg-milky-glass shadow-lg rounded-xl flex sm:flex-row flex-col sm:gap-4 gap-2 mb-4">
-        <div class="sm:w-auto w-full">
-            <x-input-label class="block">Hledat</x-input-label>
-            <x-input-text class="w-full"/>
+    <x-card class="sm:mx-4 mt-4">
+        <div class="inline-flex items-center justify-between w-full">
+            <h3>{{ __('Knowledge levels') }}</h3>
+            <a class="hover:underline text-blue-700" href="{{ route('knowledge-level.index') }}">{{ __('Edit') }}</a>
         </div>
-        <div class="sm:w-auto w-full">
-            <x-input-label class="block">Třída</x-input-label>
-            <x-input-text class="w-full"/>
+        <div class="grid sm:grid-cols-3 grid-cols-2 gap-2 mt-2">
+            @foreach($knowledgeLevels as $level)
+                <div class="border-slate-200 border rounded-md w-full p-2 flex flex-row items-center" title="{{ $level->description }}">
+                    <img src="{{ asset('assets/img/knowledge-icons/' . $level->icon) }}" alt="{{ $level->name }}" class="w-6 h-6 inline-block me-1.5">
+                    {{ $level->name }}
+                    <div class="ms-auto bg-slate-300 rounded-full px-1 py-1 leading-none text-xs">{{ $level->weight }}</div>
+                </div>
+            @endforeach
         </div>
-    </div>
 
-    <x-card class="sm:mx-4">
-        @if($edufields->isEmpty())
-            <p>{{ __('No edufields were found.') }}</p>
-        @else
-            @include('knowledge.partials.knowledge-collapsable', ['edufields' => $edufields, 'links' => true])
-        @endif
+    </x-card>
+
+    <x-card class="sm:mx-4 mt-4">
+        <x-knowledge-tree :edufields="$edufields" :mode="'edit'"/>
     </x-card>
 </x-app-layout>

@@ -9,14 +9,13 @@
 
     <x-cover-image/>
 
+    <div class="m-4 space-x-4">
+        <x-button-dark :href="route('kiosk.create')">{{ __('Start lesson') }}</x-button-dark>
+        <x-button-dark :href="route('kiosk.index')">{{ __('Continue lesson') }}</x-button-dark>
+    </div>
 
-{{--    <div class="py-12">--}}
-{{--        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">--}}
-{{--            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">--}}
-{{--                <div class="p-6 text-gray-900">--}}
-                    {{ __("You're logged in!") }}
-{{--                </div>--}}
-{{--            </div>--}}
-{{--        </div>--}}
-{{--    </div>--}}
+    <x-card class="mx-4">
+
+    </x-card>
+
 </x-app-layout>

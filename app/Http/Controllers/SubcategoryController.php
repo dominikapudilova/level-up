@@ -44,11 +44,16 @@ class SubcategoryController extends Controller
             'category_id' => ['required', 'exists:categories,id'],
         ]);
 
+        $subcategory = Subcategory::create($validated);
         $originCourse = $request->get('course');
 
-        $subcategory = Subcategory::create($validated);
-        return redirect()->route('course.edit', ['course' => $originCourse])
-            ->with('notification', __('Subcategory :name created successfully.', ['name' => $subcategory->name]));
+        if ($originCourse) {
+            return redirect()->route('course.edit', ['course' => $originCourse])
+                ->with('notification', __('Subcategory :name created successfully.', ['name' => $subcategory->name]));
+        } else {
+            return redirect()->route('knowledge.index')
+                ->with('notification', __('Subcategory :name created successfully.', ['name' => $subcategory->name]));
+        }
     }
 
     /**

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Student extends Model
 {
+    public const EXP_PER_LEVEL = 10;
     protected $fillable = [
         'first_name',
         'last_name',
@@ -22,6 +23,14 @@ class Student extends Model
     protected $casts = [
         'birth_date' => 'date',
     ];
+
+    public function knowledge()
+    {
+        return $this->belongsToMany(Knowledge::class, 'knowledge_student')
+            ->using(KnowledgeStudent::class)
+            ->withPivot(['level_id', 'issued_by'])
+            ->withTimestamps();
+    }
 
     public function edugroups() {
         return $this->belongsToMany(Edugroup::class)->orderBy('core', 'desc');
@@ -48,5 +57,17 @@ class Student extends Model
         return $this->edugroups()
             ->where('core', true)
             ->first();
+    }
+
+    public function getLevel() {
+        $level = 1;
+        $exp = $this->exp;
+
+        while ($exp >= self::EXP_PER_LEVEL) {
+            $exp -= self::EXP_PER_LEVEL;
+            $level++;
+        }
+
+        return $level;
     }
 }

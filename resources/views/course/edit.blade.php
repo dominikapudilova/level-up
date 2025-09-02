@@ -108,11 +108,7 @@
             <x-button-outline :href="route('edufield.create', ['course' => $course])"><i class="fa-solid fa-plus"></i></x-button-outline>
         </div>
 
-        @include('knowledge.partials.knowledge-collapsable', [
-            'edufields' => $edufields,
-            'course' => $course,
-            'form' => 'update-knowledge'
-        ])
+        <x-knowledge-tree :edufields="$edufields" :mode="'edit'" :course="$course" :formName="'update-knowledge'"/>
 
         <form method="POST" id="update-knowledge" action="{{ route('course.update-knowledge', $course) }}">
             @csrf

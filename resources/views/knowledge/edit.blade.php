@@ -41,7 +41,7 @@
                         <select id="subcategory_id" name="subcategory_id" class="w-full mt-1 rounded-md border-gray-200 focus:border-rose-300 focus:ring-rose-300/50 focus:ring-2 shadow-sm text-slate-600 text-sm">
                             @foreach($subcategories as $subcategory)
                                 <option value="{{ $subcategory->id }}" @selected(old('subcategory_id', $knowledge->subcategory_id) == $subcategory->id)>
-                                    {{ $subcategory->name }}
+                                    {{ $subcategory->category->edufield->name }} > {{ $subcategory->category->name }} > {{ $subcategory->name }}
                                 </option>
                             @endforeach
                         </select>

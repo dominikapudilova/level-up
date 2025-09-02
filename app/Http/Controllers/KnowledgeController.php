@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Edufield;
 use App\Models\Knowledge;
 use App\Http\Controllers\Controller;
+use App\Models\KnowledgeLevel;
 use App\Models\Subcategory;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -18,8 +20,8 @@ class KnowledgeController extends Controller
     {
         return view('knowledge.index', [
             'knowledges' => Knowledge::all(),
-            'edufields' => Edufield::all()
-//            'subcategories' => Subcategory::all()
+            'edufields' => Edufield::orderBy('code_name')->get(),
+            'knowledgeLevels' => KnowledgeLevel::all()
         ]);
     }
 
@@ -74,9 +76,16 @@ class KnowledgeController extends Controller
      */
     public function edit(Knowledge $knowledge)
     {
+        $subcategoriesOrdered = Subcategory::select('subcategories.*')
+            ->join('categories', 'categories.id', '=', 'subcategories.category_id')
+            ->join('edufields', 'edufields.id', '=', 'categories.edufield_id')
+            ->orderBy('edufields.name')
+            ->orderBy('categories.name')
+            ->orderBy('subcategories.name');
+
         return view('knowledge.edit', [
             'knowledge' => $knowledge,
-            'subcategories' => Subcategory::all()//->where('id', $knowledge->subcategory_id)
+            'subcategories' => $subcategoriesOrdered->get(),
         ]);
     }
 

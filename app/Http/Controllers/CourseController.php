@@ -69,13 +69,15 @@ class CourseController extends Controller
      */
     public function edit(Course $course)
     {
+        // orderBy for Eloquent queries // sortBy for Collections // orderBy > sortBy
         return view('course.edit', [
             'course' => $course,
-            'edugroups' => Edugroup::all()->sortBy([
-                ['core', 'desc'],
-                ['name', 'asc']
-            ]),
-            'edufields' => Edufield::all()->withRelationshipAutoloading()
+            'edugroups' => Edugroup::orderBy('core', 'desc')
+                ->orderBy('name', 'asc')
+                ->get(),
+            'edufields' => Edufield::orderBy('code_name')
+                ->get()
+                ->withRelationshipAutoloading()
         ]);
     }
 

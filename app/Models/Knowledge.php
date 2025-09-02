@@ -21,4 +21,12 @@ class Knowledge extends Model
     public function courses() {
         return $this->belongsToMany(Course::class);
     }
+
+    /*public function students()
+    {
+        return $this->belongsToMany(Student::class, 'knowledge_student')
+            ->using(KnowledgeStudent::class)
+            ->withPivot(['level_id', 'issued_by'])
+            ->withTimestamps();
+    }*/
 }

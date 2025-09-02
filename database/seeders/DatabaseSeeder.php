@@ -24,5 +24,9 @@ class DatabaseSeeder extends Seeder
             'email' => '',
             'password' => bcrypt(config('app.default_admin_pass', 'u3$tZ1IJIFHahInm3TK@')),
         ]);
+
+        $this->call([
+            KnowledgeLevelSeeder::class
+        ]);
     }
 }
