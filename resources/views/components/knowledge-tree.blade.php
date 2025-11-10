@@ -10,7 +10,10 @@
             <span class="text-slate-400 leading-none self-end">{{ $edufield->categories->count() }}</span>
             <div class="grow"></div>
             @if($mode !== 'kiosk')
-                <x-button-outline :href="route('category.create', ['course' => $course, 'edufield' => $edufield])">
+                <x-button-outline :href="route('edufield.edit', [$edufield, 'course' => $course])" @click.stop>
+                    <i class="fa-solid fa-wrench"></i>
+                </x-button-outline>
+                <x-button-outline :href="route('category.create', [$edufield, 'course' => $course])" @click.stop>
                     <i class="fa-solid fa-plus"></i>
                 </x-button-outline>
             @endif
@@ -31,7 +34,10 @@
                             <span class="text-slate-400 leading-none self-end">{{ $category->subcategories->count() }}</span>
                             <div class="grow"></div>
                             @if($mode !== 'kiosk')
-                                <x-button-outline :href="route('subcategory.create', ['course' => $course, 'category' => $category])">
+                                <x-button-outline :href="route('category.edit', [$category, 'course' => $course])" @click.stop>
+                                    <i class="fa-solid fa-wrench"></i>
+                                </x-button-outline>
+                                <x-button-outline :href="route('subcategory.create', [$category, 'course' => $course])" @click.stop>
                                     <i class="fa-solid fa-plus"></i>
                                 </x-button-outline>
                             @endif
@@ -52,7 +58,10 @@
                                             <span class="text-slate-400 leading-none self-end">{{ $subcategory->knowledge->count() }}</span>
                                             <div class="grow"></div>
                                             @if($mode !== 'kiosk')
-                                                <x-button-outline :href="route('knowledge.create', ['course' => $course, 'subcategory' => $subcategory])">
+                                                <x-button-outline :href="route('subcategory.edit', [$subcategory, 'course' => $course])" @click.stop>
+                                                    <i class="fa-solid fa-wrench"></i>
+                                                </x-button-outline>
+                                                <x-button-outline :href="route('knowledge.create', [$subcategory, 'course' => $course])" @click.stop>
                                                     <i class="fa-solid fa-plus"></i>
                                                 </x-button-outline>
                                             @endif
@@ -70,16 +79,15 @@
                                                         <i class="fa-solid fa-graduation-cap"></i>
                                                         <div>
                                                             <span class="text-xs uppercase text-slate-400">{{ __('Knowledge') }}</span>
-                                                            @if($mode !== 'kiosk')
-                                                                <a class="hover:underline" href="{{ route('knowledge.edit', $knowledge) }}">
-                                                                    <h6 class="text-slate-600 text-lg sm:text-nowrap leading-none">{{ $knowledge->name }}</h6>
-                                                                </a>
-                                                            @else
-                                                                <h6 class="text-slate-600 text-lg sm:text-nowrap leading-none">{{ $knowledge->name }}</h6>
-                                                            @endif
+                                                            <h6 class="text-slate-600 text-lg sm:text-nowrap leading-none">{{ $knowledge->name }}</h6>
                                                         </div>
                                                         <span class="text-slate-400 text-xs leading-none self-end">{{ $knowledge->courses->count() }}</span>
                                                         <div class="grow"></div>
+                                                        @if($mode !== 'kiosk')
+                                                            <x-button-outline :href="route('knowledge.edit', [$knowledge, 'course' => $course])">
+                                                                <i class="fa-solid fa-wrench"></i>
+                                                            </x-button-outline>
+                                                        @endif
                                                         @if($course && $mode !== 'kiosk')
                                                             <label for="knowledge-{{$knowledge->id}}" class="hidden">{{ $knowledge->name }}</label>
                                                             <input form="{{ $formName }}" id="knowledge-{{$knowledge->id}}" type="checkbox" name="knowledge[]" value="{{ $knowledge->id }}" @checked($isChecked($course, $knowledge))>

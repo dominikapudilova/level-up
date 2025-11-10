@@ -40,13 +40,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/course/{course}/remove-knowledge', [CourseController::class, 'removeKnowledge'])->name('course.remove-knowledge');
 
     Route::resource('edufield', EdufieldController::class)->names('edufield')
-        ->only(['create', 'store']); //'index', 'show', 'edit', 'update', 'destroy'
+        ->only(['create', 'store', 'edit', 'update']); //'index', 'show', 'destroy'
 
     Route::resource('category', CategoryController::class)->names('category')
-        ->only(['create', 'store']); //'index', 'show', 'edit', 'update', 'destroy'
+        ->only(['create', 'store', 'edit', 'update']); //'index', 'show', 'destroy'
 
     Route::resource('subcategory', SubcategoryController::class)->names('subcategory')
-        ->only(['create', 'store']); //'index', 'show', 'edit', 'update', 'destroy'
+        ->only(['create', 'store', 'edit', 'update']); //'index', 'show', 'destroy'
 
     Route::resource('knowledge', KnowledgeController::class)->names('knowledge')
         ->only(['index', 'create', 'store', 'edit', 'update']); //, 'show', , , 'destroy'

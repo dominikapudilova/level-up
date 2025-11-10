@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div>
-            <a href="{{ request('course') ? route('course.show', ['course' => request('course')]) : route('course.index') }}" class="hover:underline">&laquo;&nbsp;{{ __('Back') }}</a>
+            <a href="{{ request('course') ? route('course.edit', ['course' => request('course')]) : route('knowledge.index') }}" class="hover:underline">&laquo;&nbsp;{{ __('Back') }}</a>
             <h2 class="ms-2 inline-block font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Create new knowledge') }}
             </h2>
@@ -14,7 +14,7 @@
         <x-card class="text-sm sm:w-1/2 w-full sm:mx-0 bg-milky-glass">
             <h5 class="text-slate-600 text-base ">{{ __('New knowledge in the :name subcategory', ['name' => $subcategory->name]) }}</h5>
             <div class="mb-4">
-                <p>{{ __('Other knowledge units in this subcategory') }}: @forelse($knowledges as $knowledge) {{ $knowledge->name }}@empty -- @endforelse</p>
+                <p>{{ __('Other knowledge units in this subcategory') }}: {{ $knowledgesImploded }}</p>
             </div>
             <form class="w-full" method="POST" action="{{ route('knowledge.store', ['course' => request('course')]) }}">
                 @csrf

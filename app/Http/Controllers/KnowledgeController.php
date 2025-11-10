@@ -33,9 +33,11 @@ class KnowledgeController extends Controller
         $subcategoryId = request('subcategory');
         $subcategory = Subcategory::findOrFail($subcategoryId);
 
+        $knowledges = Knowledge::all()->where('subcategory', $subcategory);
+
         return view('knowledge.create', [
             'subcategory' => $subcategory,
-            'knowledges' => Knowledge::all()->where('subcategory', $subcategory)
+            'knowledgesImploded' => $knowledges->implode('name', ', ')
         ]);
     }
 
@@ -104,7 +106,13 @@ class KnowledgeController extends Controller
         $knowledge->fill($validated);
         $knowledge->save();
 
-        return redirect()->route('knowledge.index')
+        $originCourse = $request->get('course');
+
+        if (!$originCourse) {
+            return redirect()->route('knowledge.index')
+                ->with('notification', __('Knowledge :name updated successfully.', ['name' => $knowledge->name]));
+        }
+        return redirect()->route('course.edit', ['course' => $originCourse])
             ->with('notification', __('Knowledge :name updated successfully.', ['name' => $knowledge->name]));
     }
 

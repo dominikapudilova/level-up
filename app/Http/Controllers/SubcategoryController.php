@@ -7,6 +7,7 @@ use App\Models\Edufield;
 use App\Models\Subcategory;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class SubcategoryController extends Controller
 {
@@ -26,9 +27,11 @@ class SubcategoryController extends Controller
         $categoryId = request('category');
         $category = Category::findOrFail($categoryId);
 
+        $subcategories = Subcategory::all()->where('category', $category);
+
         return view('subcategory.create', [
             'category' => $category,
-            'subcategories' => Subcategory::all()->where('category', $category)
+            'subcategoriesImploded' => $subcategories->implode('name', ', ')
         ]);
     }
 
@@ -69,7 +72,16 @@ class SubcategoryController extends Controller
      */
     public function edit(Subcategory $subcategory)
     {
-        //
+        $categoriesOrdered = Category::select('categories.*')
+            ->join('edufields', 'edufields.id', '=', 'categories.edufield_id')
+            ->orderBy('edufields.name')
+            ->orderBy('categories.name')
+            ->get();
+
+        return view('subcategory.edit', [
+            'subcategory' => $subcategory,
+            'categories' => $categoriesOrdered
+        ]);
     }
 
     /**
@@ -77,7 +89,24 @@ class SubcategoryController extends Controller
      */
     public function update(Request $request, Subcategory $subcategory)
     {
-        //
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'code_name' => ['required', 'alpha_dash', 'max:20', Rule::unique('subcategories')->ignore($subcategory)],
+            'description' => ['required', 'string', 'max:2000'],
+            'category_id' => ['required', 'exists:categories,id'],
+        ]);
+
+        $subcategory->fill($validated);
+        $subcategory->save();
+
+        $originCourse = $request->get('course');
+
+        if (!$originCourse) {
+            return redirect()->route('knowledge.index')
+                ->with('notification', __('Subcategory :name updated successfully.', ['name' => $subcategory->name]));
+        }
+        return redirect()->route('course.edit', ['course' => $originCourse])
+            ->with('notification', __('Subcategory :name updated successfully.', ['name' => $subcategory->name]));
     }
 
     /**

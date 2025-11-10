@@ -34,7 +34,7 @@
                 <tr class="text-slate-400 uppercase text-xs border-b border-slate-200">
                     <td class="pb-2">{{ __('Name') }}</td>
                     <td class="pb-2">{{ __('Core') }}</td>
-                    <td class="pb-2"><i class="fa-solid fa-graduation-cap"></i></td>
+                    <td class="pb-2"><i class="fa-solid fa-users"></i></td>
                     <td class="pb-2"><i class="fa-solid fa-person-chalkboard"></i></td>
                 </tr>
                 </thead>

@@ -27,6 +27,12 @@
     </x-card>
 
     <x-card class="sm:mx-4 mt-4">
+        <div class="inline-flex items-center justify-between w-full">
+            <h3>{{ __('Manage knowledge') }}</h3>
+            <x-button-outline :href="route('edufield.create')">
+                <i class="fa-solid fa-plus"></i>
+            </x-button-outline>
+        </div>
         <x-knowledge-tree :edufields="$edufields" :mode="'edit'"/>
     </x-card>
 </x-app-layout>

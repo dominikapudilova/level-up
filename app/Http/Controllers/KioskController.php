@@ -190,7 +190,7 @@ class KioskController extends Controller
 
     public function kioskSession(Request $request, KioskSession $kiosk) {
         // check active
-        if ($kiosk->ended_at || !$kiosk->started_at->isToday()) { // lesson is automatically closed at the end of the day
+        if ($kiosk->ended_at) { // || !$kiosk->started_at->isToday() lesson is automatically closed at the end of the day
             return redirect()->route('kiosk.create')
                 ->withErrors(__('This class did not start today or it has already ended.'));
         }
