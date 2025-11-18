@@ -10,7 +10,7 @@
 
     <x-cover-image/>
 
-    <div class="flex gap-4 flex-col sm:flex-row justify-center mt-4 sm:mx-4">
+    <div class="flex gap-4 flex-col justify-center items-center mt-4 sm:mx-4">
         <x-card class="text-sm sm:w-1/2 w-full sm:mx-0">
             <h5 class="text-slate-600 text-base mb-4">{{ __('Edit subcategory :name', ['name' => $subcategory->name]) }}</h5>
             <form class="w-full " method="POST" action="{{ route('subcategory.update', [ $subcategory, 'course' => request('course') ]) }}">
@@ -53,7 +53,16 @@
             </form>
         </x-card>
 
-
+        <x-card class="text-sm sm:w-1/2 w-full sm:mx-0 bg-red-100 space-y-2">
+            <h5 class="text-red-600 text-base">{{ __('Danger zone') }}</h5>
+            <p class="text-red-600">{{ __('Removing this subcategory is permanent. The knowledge it is containing will be deleted as well. Deleted knowledge will be deleted from students.') }}</p>
+            <p class="text-red-600">{{ __('Knowledge units count') }}: {{ $subcategory->knowledge()->count() }}</p>
+            <form method="POST" action="{{ route('subcategory.destroy', [ $subcategory, 'course' => request('course') ]) }}">
+                @csrf
+                @method('delete')
+                <x-danger-button class="float-end">{{ __('Delete subcategory') }}</x-danger-button>
+            </form>
+        </x-card>
     </div>
 
 

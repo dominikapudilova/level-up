@@ -119,8 +119,17 @@ class KnowledgeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Knowledge $knowledge)
+    public function destroy(Request $request, Knowledge $knowledge)
     {
-        //
+        $knowledgeName = $knowledge->name;
+        $knowledge->delete();
+
+        $originCourse = $request->get('course');
+        if (!$originCourse) {
+            return redirect()->route('knowledge.index')
+                ->with('notification', __('Knowledge :name deleted successfully.', ['name' => $knowledgeName]));
+        }
+        return redirect()->route('course.edit', ['course' => $originCourse])
+            ->with('notification', __('Knowledge :name deleted successfully.', ['name' => $knowledgeName]));
     }
 }

@@ -112,8 +112,17 @@ class SubcategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Subcategory $subcategory)
+    public function destroy(Request $request, Subcategory $subcategory)
     {
-        //
+        $subcategoryName = $subcategory->name;
+        $subcategory->delete();
+
+        $originCourse = $request->get('course');
+        if (!$originCourse) {
+            return redirect()->route('knowledge.index')
+                ->with('notification', __('Subcategory :name deleted successfully.', ['name' => $subcategoryName]));
+        }
+        return redirect()->route('course.edit', ['course' => $originCourse])
+            ->with('notification', __('Subcategory :name deleted successfully.', ['name' => $subcategoryName]));
     }
 }

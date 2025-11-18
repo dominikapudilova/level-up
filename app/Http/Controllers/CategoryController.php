@@ -105,8 +105,17 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Category $category)
+    public function destroy(Request $request, Category $category)
     {
-        //
+        $categoryName = $category->name;
+        $category->delete();
+
+        $originCourse = $request->get('course');
+        if (!$originCourse) {
+            return redirect()->route('knowledge.index')
+                ->with('notification', __('Category :name deleted successfully.', ['name' => $categoryName]));
+        }
+        return redirect()->route('course.edit', ['course' => $originCourse])
+            ->with('notification', __('Category :name deleted successfully.', ['name' => $categoryName]));
     }
 }

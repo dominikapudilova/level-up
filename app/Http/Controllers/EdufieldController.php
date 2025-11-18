@@ -94,8 +94,17 @@ class EdufieldController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Edufield $edufield)
+    public function destroy(Request $request, Edufield $edufield)
     {
-        //
+        $edufieldName = $edufield->name;
+        $edufield->delete();
+
+        $originCourse = $request->get('course');
+        if (!$originCourse) {
+            return redirect()->route('knowledge.index')
+                ->with('notification', __('Education field :name deleted successfully.', ['name' => $edufieldName]));
+        }
+        return redirect()->route('course.edit', ['course' => $originCourse])
+            ->with('notification', __('Education field :name deleted successfully.', ['name' => $edufieldName]));
     }
 }

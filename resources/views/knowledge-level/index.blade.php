@@ -9,11 +9,9 @@
     </x-slot>
 
     <x-cover-image/>
-
-    <div class="flex flex-col items-center gap-4 sm:mx-4 mt-4 w-full">
+    <div class="flex flex-col items-center gap-4 sm:mx-4 mt-4">
         @foreach($knowledgeLevels as $level)
-            <x-card class="sm:w-1/2 w-full">
-
+            <x-card class="sm:w-1/2 w-full sm:mx-0">
                 <form action="{{ route('knowledge-level.update', $level) }}" method="POST" class="w-full">
                     @csrf
                     @method('PATCH')

@@ -13,7 +13,7 @@
                 <x-button-outline :href="route('edufield.edit', [$edufield, 'course' => $course])" @click.stop>
                     <i class="fa-solid fa-wrench"></i>
                 </x-button-outline>
-                <x-button-outline :href="route('category.create', [$edufield, 'course' => $course])" @click.stop>
+                <x-button-outline :href="route('category.create', ['edufield' => $edufield, 'course' => $course])" @click.stop>
                     <i class="fa-solid fa-plus"></i>
                 </x-button-outline>
             @endif
@@ -37,7 +37,7 @@
                                 <x-button-outline :href="route('category.edit', [$category, 'course' => $course])" @click.stop>
                                     <i class="fa-solid fa-wrench"></i>
                                 </x-button-outline>
-                                <x-button-outline :href="route('subcategory.create', [$category, 'course' => $course])" @click.stop>
+                                <x-button-outline :href="route('subcategory.create', ['category' => $category, 'course' => $course])" @click.stop>
                                     <i class="fa-solid fa-plus"></i>
                                 </x-button-outline>
                             @endif
@@ -61,7 +61,7 @@
                                                 <x-button-outline :href="route('subcategory.edit', [$subcategory, 'course' => $course])" @click.stop>
                                                     <i class="fa-solid fa-wrench"></i>
                                                 </x-button-outline>
-                                                <x-button-outline :href="route('knowledge.create', [$subcategory, 'course' => $course])" @click.stop>
+                                                <x-button-outline :href="route('knowledge.create', ['subcategory' => $subcategory, 'course' => $course])" @click.stop>
                                                     <i class="fa-solid fa-plus"></i>
                                                 </x-button-outline>
                                             @endif
