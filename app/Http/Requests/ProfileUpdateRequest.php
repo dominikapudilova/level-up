@@ -17,8 +17,9 @@ class ProfileUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
+            'first_name' => ['string', 'max:255'],
+            'last_name' => ['string', 'max:255'],
+            'pin' => ['confirmed', 'nullable', 'string', 'min:4', 'max:20'],
 //            'old_pass' => ['nullable', 'string', 'current_password'],
 //            'new_pass' => ['nullable', 'string', 'min:8', Rules\Password::defaults()], //'confirmed'
             /*'email' => [

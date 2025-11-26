@@ -16,7 +16,7 @@
     </div>
 
     <div class="flex gap-4 mx-4 flex-col sm:flex-row">
-        <x-card class="text-sm sm:w-1/2 w-full sm:mx-0">
+        <x-card class="text-sm sm:w-1/3 w-full sm:mx-0">
             <h5 class="text-slate-600 text-base mb-4">{{ __('Profile') }}</h5>
             <form class="w-full " method="POST" action="{{ route('profile.update') }}">
                 @csrf
@@ -44,7 +44,7 @@
             </form>
         </x-card>
 
-        <x-card class="text-sm sm:w-1/2 w-full sm:mx-0">
+        <x-card class="text-sm sm:w-1/3 w-full sm:mx-0">
             <h5 class="text-slate-600 text-base mb-4">{{ __('Password') }}</h5>
             <form class="w-full " method="POST" action="{{ route('password.update') }}">
                 @csrf
@@ -66,6 +66,33 @@
 
                 <x-button-dark class="float-end mt-4">
                     {{ __('Change password') }}
+                </x-button-dark>
+            </form>
+        </x-card>
+
+        <x-card class="text-sm sm:w-1/3 w-full sm:mx-0">
+            <h5 class="text-slate-600 text-base mb-4">{{ __('PIN') }}</h5>
+
+            <form class="w-full " method="POST" action="{{ route('profile.update') }}">
+                @csrf
+                @method('patch')
+
+                <div class="space-y-4 w-full">
+                    <div>
+                        <x-input-label for="pin">{{ __('New PIN') }}</x-input-label>
+                        <x-input-text id="pin" class="w-full mt-1" name="pin" type="password" minlength="4" maxlength="20"></x-input-text>
+                        <x-input-error :messages="$errors->get('pin')" class="mt-2"/>
+                    </div>
+
+                    <div>
+                        <x-input-label for="pin_confirmation">{{ __('Confirm new PIN') }}</x-input-label>
+                        <x-input-text id="pin_confirmation" class="w-full mt-1" name="pin_confirmation" type="password"></x-input-text>
+                        <x-input-error :messages="$errors->get('pin_confirmation')" class="mt-2"/>
+                    </div>
+                </div>
+
+                <x-button-dark class="float-end mt-4">
+                    {{ __('Change PIN') }}
                 </x-button-dark>
             </form>
         </x-card>

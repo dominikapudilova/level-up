@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('knowledge_id')->constrained()->cascadeOnDelete();
             $table->foreignId('level_id')->constrained('knowledge_levels')->cascadeOnDelete();
             $table->foreignId('issued_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('kiosk_id')->nullable()->constrained('kiosk_sessions')->nullOnDelete();
             $table->timestamps();
 
             $table->unique(['student_id', 'knowledge_id', 'level_id']); // each student can have only one level per knowledge

@@ -8,10 +8,11 @@ use App\Models\Edugroup;
 use App\Models\KioskSession;
 use App\Models\KnowledgeLevel;
 use App\Models\KnowledgeStudent;
-use App\Models\Student;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class KioskController extends Controller
 {
@@ -70,7 +71,7 @@ class KioskController extends Controller
 //        $teacherId = auth()->user();
 //        $this->startKioskSession($request, $kiosk, $teacherId);
 
-        return redirect()->route('kiosk.attendance', $kiosk)->with('notification', 'Kiosk session created successfully.');
+        return redirect()->route('kiosk.attendance', $kiosk); //->with('notification', 'Kiosk session created successfully.');
     }
 
     /**
@@ -98,13 +99,27 @@ class KioskController extends Controller
     }
 
     public function endSession(Request $request, KioskSession $kiosk) {
+        $teacher = User::findOrFail($kiosk->teacher_id);
+
+        // if ending currently running session, forget. Otherwise, it is just ending an older session.
+        /*if (session('kiosk_session_id') == $kiosk->id) {
+            session()->forget('kiosk_session_id');
+        }*/
+
+        // validate and check user's PIN
+        $validated = $request->validate([
+            'pin' => 'required|string|min:4|max:20',
+        ]);
+
+        if ($validated['pin'] !== $teacher->pin) {
+            throw ValidationException::withMessages(['pin' => __('The provided PIN is incorrect.')]);
+        }
+
         $kiosk->ended_at = now();
         $kiosk->save();
 
-        // if ending currently running session, forget. Otherwise, it is just ending an older session.
-        if (session('kiosk_session_id') == $kiosk->id) {
-            session()->forget('kiosk_session_id');
-        }
+        // log user back in after closing session
+        Auth::loginUsingId($teacher->id);
 
         return redirect()->route('kiosk.index')->with('notification', __('Kiosk session ended successfully.'));
     }
@@ -206,10 +221,11 @@ class KioskController extends Controller
         }
 
         // start...
-//        $this->startKioskSession($request, $kiosk, auth()->id());
+        $this->startKioskSession($request, $kiosk, auth()->id());
 
         return view('kiosk.session', [
             'kiosk' => $kiosk,
+            'teacherName' => $kiosk->teacher->first_name . ' ' . $kiosk->teacher->last_name,
             'students' => $attendance->pluck('student')->sortBy('last_name'),
             'edugroup' => $kiosk->edugroup,
             'course' => $kiosk->course,
@@ -245,40 +261,47 @@ class KioskController extends Controller
     }
 
     private function startKioskSession(Request $request, KioskSession $kiosk, $userId) {
-        // todo: v tomhle stavu nefunguje. jen odhlásí, ale neuloží do session
         // log user out
         Auth::guard('web')->logout();
 //        $request->session()->invalidate();
 //        $request->session()->regenerateToken();
 //        $request->session()->regenerate();
 
-        // save to session
-        $request->session()->put('kiosk_session_id', $kiosk->id);
-        $request->session()->put('teacher_id', $userId);
+        // save info to session -> it is already saved in the kiosk object
+//        $request->session()->put('kiosk_session_id', $kiosk->id);
+//        $request->session()->put('teacher_id', $userId);
 //        session(['kiosk_session_id' => $kiosk->id]);
 //        session(['teacher_id' => $userId]);
     }
 
     public function giveKnowledge(Request $request, KioskSession $kiosk) {
         $validated = $request->validate([
+            'pin' => 'required|string|min:4|max:20',
             'students' => 'required|array|min:1',
             'students.*' => 'exists:students,id',
             'knowledge_id' => 'required|exists:knowledge,id',
             'level_id' => 'required|exists:knowledge_levels,id',
         ]);
+
+        // check user's PIN
+        if ($validated['pin'] !== $kiosk->teacher->pin) {
+            throw ValidationException::withMessages(['pin' => __('The provided PIN is incorrect.')]);
+        }
+
+        // save knowledge for each student
+        $knowledgeId = $validated['knowledge_id'];
+        $levelId = $validated['level_id'];
         $studentIds = $validated['students'];
 
         foreach ($studentIds as $studentId) {
-            $knowledgeId = $validated['knowledge_id'];
-            $levelId = $validated['level_id'];
-
             // give knowledge
             KnowledgeStudent::firstOrCreate([
                 'student_id' => $studentId,
                 'knowledge_id' => $knowledgeId,
                 'level_id' => $levelId,
             ], [
-                'issued_by' => session('teacher_id'),
+                'kiosk_id' => $kiosk->id,
+                'issued_by' => $kiosk->teacher_id,
             ]);
         }
 

@@ -55,6 +55,7 @@
         <x-card class="text-sm sm:w-1/2 w-full sm:mx-0 bg-red-100 space-y-2">
             <h5 class="text-red-600 text-base">{{ __('Danger zone') }}</h5>
             <p class="text-red-600">{{ __('Removing this knowledge is permanent. It will be removed from all students as well.') }}</p>
+            <p class="text-red-600">{{ __('Count of students with this knowledge') }}: {{ $knowledge->students->count() }}</p>
             <form method="POST" action="{{ route('knowledge.destroy', [ $knowledge, 'course' => request('course') ]) }}">
                 @csrf
                 @method('delete')

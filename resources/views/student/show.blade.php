@@ -70,8 +70,23 @@
 
         <x-card class="text-sm sm:w-1/3">
             <h5 class="text-slate-600 text-base mb-4">{{ __('Achieved knowledge') }}</h5>
-            nevim
+
         </x-card>
     </div>
+
+    <x-card class="text-sm m-4">
+        <h5 class="text-slate-600 text-base mb-4">{{ __('Achieved knowledge') }}</h5>
+        @forelse($student->knowledge as $knowledge)
+            <div class="">
+                <a class="hover:underline" href="{{ route('edufield.edit', $knowledge->subcategory->category->edufield) }}">{{ $knowledge->subcategory->category->edufield->name }}</a> >
+                <a class="hover:underline" href="{{ route('category.edit', $knowledge->subcategory->category) }}">{{ $knowledge->subcategory->category->name }}</a> >
+                <a class="hover:underline" href="{{ route('subcategory.edit', $knowledge->subcategory) }}">{{ $knowledge->subcategory->name }}</a> >
+                <a class="hover:underline" href="{{ route('knowledge.edit', $knowledge) }}">{{ $knowledge->name }}</a>
+                <span class="text-slate-400 text-sm ms-2">({{ $knowledge->pivot->created_at->format('j.n. Y H:i') }})</span>
+            </div>
+        @empty
+            {{ __('This student has achieved no knowledge yet.') }}
+        @endforelse
+    </x-card>
 
 </x-app-layout>

@@ -71,8 +71,7 @@
                                             <div class="border border-slate-200 rounded-md p-1 ps-4">
                                                 @forelse($subcategory->knowledge as $knowledge)
                                                     @if($mode === 'kiosk')
-                                                        <div class=" cursor-pointer hover:bg-slate-100 rounded-md"
-                                                        @click="document.getElementById('knowledge-{{$knowledge->id}}').checked = true" >
+                                                        <div class=" cursor-pointer hover:bg-slate-100 rounded-md" @click="selectedKnowledge = {{ $knowledge->id }}" >
                                                     @endif
 
                                                     <div class="flex items-center gap-2 p-2 rounded-md ">
@@ -93,10 +92,10 @@
                                                             <input form="{{ $formName }}" id="knowledge-{{$knowledge->id}}" type="checkbox" name="knowledge[]" value="{{ $knowledge->id }}" @checked($isChecked($course, $knowledge))>
                                                         @elseif($mode === 'kiosk')
                                                             <label for="knowledge-{{$knowledge->id}}" class="hidden">{{ $knowledge->name }}</label>
-                                                            <input form="{{ $formName }}" id="knowledge-{{$knowledge->id}}" type="radio" name="knowledge_id" value="{{ $knowledge->id }}" @checked(old('knowledge_id') == $knowledge->id)>
+                                                            <input form="{{ $formName }}" id="knowledge-{{$knowledge->id}}" type="radio" name="knowledge_id" value="{{ $knowledge->id }}" x-model="selectedKnowledge">
                                                         @endif
                                                     </div>
-                                                    <p>{{ $knowledge->description }}</p>
+                                                    <p class="px-1">{{ $knowledge->description }}</p>
 
                                                     @if($mode === 'kiosk')</div>@endif
                                                 @empty

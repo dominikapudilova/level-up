@@ -10,6 +10,7 @@ class KnowledgeStudent extends Pivot
         'student_id',
         'knowledge_id',
         'level_id',
+        'kiosk_id',
         'issued_by',
     ];
 
