@@ -27,9 +27,23 @@ hr {
     background-image: linear-gradient(90deg, transparent, rgba(0, 0, 0, .4), transparent)
 }
 
+/*themes*/
 .bg-gradient-dark {
     background-image: linear-gradient(310deg, #141727, #3a416f)
 }
+.bg-gradient-sky {
+    background-image: linear-gradient(310deg, #2152ff, #02c6f3)
+}
+.bg-gradient-magenta {
+    background-image: linear-gradient(310deg, #7928ca, #d6006c)
+}
+.bg-gradient-light {
+    background-image: linear-gradient(310deg, #627594, #8ca1cb)
+}
+.bg-gradient-yellow {
+    background-image: linear-gradient(310deg, #f53939, #fac60b)
+}
+/*end themes*/
 
 .bg-gradient-green {
     background-image: linear-gradient(310deg, #17ad37, #84dc14)

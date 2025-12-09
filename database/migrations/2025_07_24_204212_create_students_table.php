@@ -20,8 +20,9 @@ return new class extends Migration
 
             $table->string('nickname')->unique();
             $table->string('access_pin', 4);
-            $table->string('avatar')->nullable();
+            $table->string('avatar')->default('YOUR-TEXT.png');
             $table->string('background_image')->nullable();
+            $table->string('theme')->default('dark');
 
             $table->integer('exp')->default(0);
             $table->integer('karma')->default(0);

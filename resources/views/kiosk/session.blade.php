@@ -1,6 +1,6 @@
 <x-kiosk-layout>
 
-    <div class="max-w-full w-full absolute top-0 -z-0 sm:min-h-[50vh] min-h-dvh" style="background-image: url('{{ asset('assets/img/patterns/pattern'. rand(1, 8) .'.png') }}')">
+    <div class="max-w-full w-full absolute top-0 -z-0  min-h-dvh" style="background-image: url('{{ asset('assets/img/backgrounds/pattern'. rand(1, 18) .'.png') }}')">
         <span class="mask bg-gradient-dark opacity-80"></span>
     </div>
 
@@ -23,7 +23,7 @@
             <p class="text-white">{{ $kiosk->started_at->format('d.m. H:i') }}</p>
 
             <div class="absolute top-2 right-auto sm:right-0 flex sm:flex-col flex-row gap-2 sm:ms-auto ms-2">
-                <x-button-dark class="w-full">
+                <x-button-dark :href="route('kiosk.student.index', $kiosk)" class="w-full">
                     {{ __('Version for students') }}
                 </x-button-dark>
                 <x-button-dark x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-end-session')" class="w-full">

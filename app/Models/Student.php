@@ -70,4 +70,11 @@ class Student extends Model
 
         return $level;
     }
+
+    public function getExpToNextLevel() {
+        $exp = $this->exp;
+        $level = $this->getLevel();
+
+        return ($level * self::EXP_PER_LEVEL) - $exp;
+    }
 }

@@ -6,8 +6,10 @@ use App\Models\Attendance;
 use App\Models\Course;
 use App\Models\Edugroup;
 use App\Models\KioskSession;
+use App\Models\Knowledge;
 use App\Models\KnowledgeLevel;
 use App\Models\KnowledgeStudent;
+use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -110,10 +112,7 @@ class KioskController extends Controller
         $validated = $request->validate([
             'pin' => 'required|string|min:4|max:20',
         ]);
-
-        if ($validated['pin'] !== $teacher->pin) {
-            throw ValidationException::withMessages(['pin' => __('The provided PIN is incorrect.')]);
-        }
+        $this->checkPin($validated['pin'], $teacher->pin);
 
         $kiosk->ended_at = now();
         $kiosk->save();
@@ -121,7 +120,7 @@ class KioskController extends Controller
         // log user back in after closing session
         Auth::loginUsingId($teacher->id);
 
-        return redirect()->route('kiosk.index')->with('notification', __('Kiosk session ended successfully.'));
+        return redirect()->route('dashboard')->with('notification', __('Kiosk session ended successfully.'));
     }
 
     /**
@@ -260,7 +259,7 @@ class KioskController extends Controller
             ->values();
     }
 
-    private function startKioskSession(Request $request, KioskSession $kiosk, $userId) {
+    private function startKioskSession(Request $request, KioskSession $kiosk, $userId) { // todo: upravit?
         // log user out
         Auth::guard('web')->logout();
 //        $request->session()->invalidate();
@@ -284,34 +283,236 @@ class KioskController extends Controller
         ]);
 
         // check user's PIN
-        if ($validated['pin'] !== $kiosk->teacher->pin) {
-            throw ValidationException::withMessages(['pin' => __('The provided PIN is incorrect.')]);
-        }
+        $this->checkPin($validated['pin'], $kiosk->teacher->pin);
 
         // save knowledge for each student
-        $knowledgeId = $validated['knowledge_id'];
-        $levelId = $validated['level_id'];
+        $knowledge = Knowledge::findOrFail($validated['knowledge_id']);
+        $level = KnowledgeLevel::findOrFail($validated['level_id']);
         $studentIds = $validated['students'];
 
         foreach ($studentIds as $studentId) {
+            $student = Student::find($studentId);
+
             // give knowledge
             KnowledgeStudent::firstOrCreate([
-                'student_id' => $studentId,
-                'knowledge_id' => $knowledgeId,
-                'level_id' => $levelId,
+                'student_id' => $student->id,
+                'knowledge_id' => $knowledge->id,
+                'level_id' => $level->id,
             ], [
                 'kiosk_id' => $kiosk->id,
                 'issued_by' => $kiosk->teacher_id,
             ]);
+
+            // give experience
+            $student->exp += $level->weight;
+            $student->save();
         }
 
-        // todo: (dodělat shrnutí), stránka kiosku pro žáky
         return redirect()->route('kiosk.session', $kiosk)
             ->with('notification', __('Knowledge given successfully to selected students.'));
     }
 
-    /*public function logout(Request $request) {
-        session()->forget('kiosk_session_id');
-        return redirect()->route('kiosk.index')->with('notification', __('You have been logged out from the kiosk.'));
-    }*/
+    // pages for students ...
+    public function selectStudentIndex(Request $request, KioskSession $kiosk) {
+        $attendance = Attendance::where('kiosk_session_id', $kiosk->id)
+            ->with('student')
+            ->get();
+
+        session(['kiosk_student_auth' => null]);
+
+        return view('kiosk.select-student-index', [
+            'students' => $attendance->pluck('student')->sortBy('last_name'),
+            'kiosk' => $kiosk,
+        ]);
+    }
+
+    public function editStudent(Request $request, KioskSession $kiosk, Student $student) {
+        // validate and check student's PIN
+        $validated = $request->validate([
+            'pin' => 'required|string|min:4|max:20',
+        ]);
+        $this->checkPin($validated['pin'], $student->access_pin);
+
+        session([ 'kiosk_student_auth' => $student->id ]); // todo: takto? nebo _id => true
+
+        return redirect()->route('kiosk.student.edit-index', [$kiosk, $student]);
+    }
+
+    public function editStudentIndex(Request $request, KioskSession $kiosk, Student $student) {
+        if (session('kiosk_student_auth') !== $student->id) {
+            return redirect()->route('kiosk.student.index', $kiosk)
+                ->withErrors(__('Please verify your PIN to access student settings.'));
+        }
+
+        return view('kiosk.edit-student', [
+            'kiosk' => $kiosk,
+            'student' => $student,
+        ]);
+    }
+
+    public function purchasePfp(Request $request, KioskSession $kiosk, Student $student) {
+        // validate and check student's PIN
+        $validated = $request->validate([
+            'pin' => 'required|string|min:4|max:20',
+            'pfp' => 'required|string|max:255',
+        ]);
+        $this->checkPin($validated['pin'], $student->access_pin);
+        $pfp = $validated['pfp'];
+
+        // check if not the same
+        if ($pfp == $student->avatar) {
+            return redirect()->route('kiosk.student.edit-index', [$kiosk, $student])
+                ->withErrors(__('You cannot purchase a profile picture you already own.'));
+        }
+
+        // check enough bucks
+        if ($pfp === 'random') {
+            $pfpCost = config('school.economy.prices.profile_picture_random', 5);
+            $pfp = collect(config('school.cosmetics.avatars'))
+                ->filter(fn($avatar) => $avatar !== $student->avatar)
+                ->random();
+        } else {
+            $pfpCost = config('school.economy.prices.profile_picture', 10);
+        }
+
+        if ($student->bucks < $pfpCost) {
+            return redirect()->route('kiosk.student.edit-index', [$kiosk, $student])
+                ->withErrors(__('You do not have enough Brain Bucks to purchase this profile picture.'));
+        }
+
+        // deduct bucks
+        $student->bucks -= $pfpCost;
+
+        // set new pfp
+        $student->avatar = $pfp;
+        $student->save();
+
+        return redirect()
+            ->route('kiosk.student.edit-index', [$kiosk, $student])
+            ->with('notification', __('Profile picture changed successfully.'));
+    }
+
+    public function purchaseBg(Request $request, KioskSession $kiosk, Student $student) {
+        $validated = $request->validate([
+            'pin' => 'required|string|min:4|max:20',
+            'bg' => 'required|string|max:255',
+        ]);
+        $this->checkPin($validated['pin'], $student->access_pin);
+        $bg = $validated['bg'];
+
+        // check if not the same
+        if ($bg == $student->background_image) {
+            return redirect()->route('kiosk.student.edit-index', [$kiosk, $student])
+                ->withErrors(__('You cannot purchase a background you already own.'));
+        }
+
+        // check enough bucks
+        if ($bg === 'random') {
+            $bgCost = config('school.economy.prices.background_random', 10);
+            $bg = collect(config('school.cosmetics.backgrounds'))
+                ->filter(fn($bg) => $bg !== $student->background_image)
+                ->random();
+        } else {
+            $bgCost = config('school.economy.prices.background', 15);
+        }
+
+        if ($student->bucks < $bgCost) {
+            return redirect()->route('kiosk.student.edit-index', [$kiosk, $student])
+                ->withErrors(__('You do not have enough Brain Bucks to purchase this background.'));
+        }
+
+        // deduct bucks
+        $student->bucks -= $bgCost;
+
+        // set new pfp
+        $student->background_image = $bg;
+        $student->save();
+
+        return redirect()
+            ->route('kiosk.student.edit-index', [$kiosk, $student])
+            ->with('notification', __('Background changed successfully.'));
+    }
+
+    public function purchaseRename(Request $request, KioskSession $kiosk, Student $student) {
+        $validated = $request->validate([
+            'pin' => 'required|string|min:4|max:20',
+            'nickname' => 'required|alpha_dash|min:4|max:50|unique:students,nickname',
+        ]);
+        $this->checkPin($validated['pin'], $student->access_pin);
+        $nickname = $validated['nickname'];
+
+        // check enough bucks
+        $renameCost = config('school.economy.prices.rename', 40);
+        if ($student->bucks < $renameCost) {
+            return redirect()->route('kiosk.student.edit-index', [$kiosk, $student])
+                ->withErrors(__('You do not have enough Brain Bucks to purchase a nickname.'));
+        }
+
+        // deduct bucks
+        $student->bucks -= $renameCost;
+
+        // set new pfp
+        $student->nickname = $nickname;
+        $student->save();
+
+        return redirect()
+            ->route('kiosk.student.edit-index', [$kiosk, $student])
+            ->with('notification', __('Nickname changed successfully.'));
+    }
+
+    public function changePin(Request $request, KioskSession $kiosk, Student $student) {
+        $validated = $request->validate([
+            'pin' => 'required|confirmed|string|min:4|max:20',
+            'pin_old' => 'required|string|min:4|max:20',
+        ]);
+        $this->checkPin($validated['pin_old'], $student->access_pin);
+        $pin = $validated['pin'];
+
+        // set new pin
+        $student->access_pin = $pin;
+        $student->save();
+
+        return redirect()
+            ->route('kiosk.student.edit-index', [$kiosk, $student])
+            ->with('notification', __('PIN changed successfully.'));
+    }
+
+    public function purchaseTheme(Request $request, KioskSession $kiosk, Student $student) {
+        $validated = $request->validate([
+            'pin' => 'required|string|min:4|max:20',
+            'theme' => 'required|string|in:' . implode(',', config('school.cosmetics.themes', [])),
+        ]);
+        $this->checkPin($validated['pin'], $student->access_pin);
+        $theme = $validated['theme'];
+
+        if ($theme == $student->theme) {
+            return redirect()->route('kiosk.student.edit-index', [$kiosk, $student])
+                ->withErrors(__('You cannot purchase a theme you already own.'));
+        }
+
+        // check enough bucks
+        $themeCost = config('school.economy.prices.theme', 30);
+        if ($student->bucks < $themeCost) {
+            return redirect()->route('kiosk.student.edit-index', [$kiosk, $student])
+                ->withErrors(__('You do not have enough Brain Bucks to purchase this theme.'));
+        }
+
+        // deduct bucks
+        $student->bucks -= $themeCost;
+
+        // set new theme
+        $student->theme = $theme;
+        $student->save();
+
+        return redirect()
+            ->route('kiosk.student.edit-index', [$kiosk, $student])
+            ->with('notification', __('Theme changed successfully.'));
+    }
+
+    private function checkPin($pin, $usersPin) {
+        // check user's PIN
+        if ($pin !== $usersPin) {
+            throw ValidationException::withMessages(['pin' => __('The provided PIN is incorrect.')]);
+        }
+    }
 }

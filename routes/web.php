@@ -78,7 +78,17 @@ Route::prefix('kiosk')->group(function () {
     Route::patch('/{kiosk}/end', [KioskController::class, 'endSession'])->name('kiosk.end');
 
     // kiosk student actions (edit profile, update pin, make a purchase etc.)
+    Route::get('/{kiosk}/student', [KioskController::class, 'selectStudentIndex'])->name('kiosk.student.index');
+//    Route::get('/{kiosk}/student/{student}', [KioskController::class, 'showStudent'])->name('kiosk.student.show');
+    Route::post('/{kiosk}/student/{student}/edit', [KioskController::class, 'editStudent'])->name('kiosk.student.edit');
+    Route::get('/{kiosk}/student/{student}/edit', [KioskController::class, 'editStudentIndex'])->name('kiosk.student.edit-index');
 
+    Route::post('/{kiosk}/student/{student}/purchase-pfp', [KioskController::class, 'purchasePfp'])->name('kiosk.student.purchase-pfp');
+    Route::post('/{kiosk}/student/{student}/purchase-bg', [KioskController::class, 'purchaseBg'])->name('kiosk.student.purchase-bg');
+    Route::post('/{kiosk}/student/{student}/purchase-theme', [KioskController::class, 'purchaseTheme'])->name('kiosk.student.purchase-theme');
+    Route::post('/{kiosk}/student/{student}/purchase-rename', [KioskController::class, 'purchaseRename'])->name('kiosk.student.purchase-rename');
+    Route::post('/{kiosk}/student/{student}/change-pin', [KioskController::class, 'changePin'])->name('kiosk.student.change-pin');
+    //todo: route na studentské zobrazení bez kiosku, dostupné od učitele, poté učitele odhlásit
 
 });
 

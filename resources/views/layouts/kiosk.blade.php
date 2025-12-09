@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'LevelUp') }}</title>
+        <title>{{ config('app.name', 'LevelUp') }} | {{ __('Kiosk') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -15,20 +15,15 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js']){{--'resources/css/softui.css'--}}
+
+        <style> [x-cloak] {display: none !important;} </style>
     </head>
     <body class="font-sans text-gray-900 antialiased bg-gray-100">
         <div class="min-h-screen flex flex-col  items-center sm:pt-0 relative">
 
             <x-status-notification class="mb-4" :status="session('status')"/>
-{{--            <div class="container position-sticky z-index-sticky top-0">--}}
-{{--                <div class="row">--}}
-{{--                    <div class="col-12">--}}
 
-                        {{ $slot }}
-
-{{--                    </div>--}}
-{{--                </div>--}}
-{{--            </div>--}}
+            {{ $slot }}
         </div>
     </body>
 </html>

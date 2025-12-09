@@ -14,5 +14,8 @@ class KnowledgeStudent extends Pivot
         'issued_by',
     ];
 
-
+    public function level() :\Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(KnowledgeLevel::class, 'level_id');
+    }
 }
