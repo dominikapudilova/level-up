@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             'username' => 'admin1796',
             'is_admin' => true,
             'email' => '',
+            'pin' => '8888',
             'password' => bcrypt(config('app.default_admin_pass', 'u3$tZ1IJIFHahInm3TK@')),
         ]);
 
