@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Student extends Model
 {
-    public const EXP_PER_LEVEL = 10;
+    use SoftDeletes;
+
     protected $fillable = [
         'first_name',
         'last_name',
@@ -63,8 +65,9 @@ class Student extends Model
         $level = 1;
         $exp = $this->exp;
 
-        while ($exp >= self::EXP_PER_LEVEL) {
-            $exp -= self::EXP_PER_LEVEL;
+        $expPerLevel = config('school.economy.exp_per_level', 10);
+        while ($exp >= $expPerLevel) {
+            $exp -= $expPerLevel;
             $level++;
         }
 
@@ -75,6 +78,6 @@ class Student extends Model
         $exp = $this->exp;
         $level = $this->getLevel();
 
-        return ($level * self::EXP_PER_LEVEL) - $exp;
+        return ($level * config('school.economy.exp_per_level', 10)) - $exp;
     }
 }

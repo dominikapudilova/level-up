@@ -50,7 +50,7 @@ class CourseController extends Controller
 
         $action = $request->input('action');
         if ($action === 'save_new') {
-            return redirect()->route('course.create')->with('notification', __('Course :name created successfully. You can add another student now.', ['name' => $course->name]));
+            return redirect()->route('course.create')->with('notification', __('Course :name created successfully. You can add another course now.', ['name' => $course->name]));
         } else {
             return redirect()->route('course.index')->with('notification', __('Course :name created successfully.', ['name' => $course->name]));
         }
@@ -119,7 +119,7 @@ class CourseController extends Controller
         // Sync updates the pivot table — adds new, removes unchecked
         $course->edugroups()->sync($validated['edugroups'] ?? []);
 
-        return redirect()->route('course.edit', $course)->with('notification', 'Groups updated successfully!');
+        return redirect()->route('course.edit', $course)->with('notification', 'Groups updated successfully.');
     }
 
     public function updateKnowledge(Request $request, Course $course) {
@@ -131,7 +131,7 @@ class CourseController extends Controller
         // Sync updates the pivot table — adds new, removes unchecked
         $course->knowledge()->sync($validated['knowledge'] ?? []);
 
-        return redirect()->route('course.edit', $course)->with('notification', 'Knowledge updated successfully!');
+        return redirect()->route('course.edit', $course)->with('notification', 'Knowledge updated successfully.');
     }
 
     public function removeKnowledge(Request $request, Course $course) {
@@ -147,6 +147,6 @@ class CourseController extends Controller
         // Detach the knowledge from the course
         $course->knowledge()->detach($knowledge);
 
-        return redirect()->route('course.edit', $course)->with('notification', __('Knowledge :name removed successfully!', ['name' => $knowledge->name]));
+        return redirect()->route('course.edit', $course)->with('notification', __('Knowledge :name removed successfully.', ['name' => $knowledge->name]));
     }
 }

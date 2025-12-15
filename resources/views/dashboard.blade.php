@@ -14,8 +14,8 @@
         <x-button-dark :href="route('kiosk.index')">{{ __('Continue lesson') }}</x-button-dark>
     </div>
 
-    <x-card class="mx-4">
+    {{--<x-card class="mx-4">
 
-    </x-card>
+    </x-card>--}}
 
 </x-app-layout>

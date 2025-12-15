@@ -10,6 +10,7 @@ use App\Http\Controllers\KnowledgeLevelController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubcategoryController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -24,10 +25,14 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 //    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // todo: for admin only
+    Route::resource('user', UserController::class)->names('user')
+        ->only(['index', 'create', 'store', 'show', 'edit', 'update', 'destroy']);
 
     Route::get('/students', [StudentController::class, 'manageStudents'])->name('students.manage');
     Route::resource('student', StudentController::class)->names('student')
         ->only(['index', 'create', 'store', 'show', 'edit', 'update']); //destroy
+    Route::put('/student/{student}/update-edugroups', [StudentController::class, 'updateEdugroups'])->name('student.update-edugroups');
 
     Route::resource('edugroup', EdugroupController::class)->names('edugroup')
         ->only(['index', 'create', 'store', 'show', 'edit', 'update', 'destroy']);
@@ -76,6 +81,7 @@ Route::prefix('kiosk')->group(function () {
     Route::post('/{kiosk}/knowledge', [KioskController::class, 'giveKnowledge'])->name('kiosk.give-knowledge');
 //    Route::post('/{kiosk}/session-end', [KioskController::class, 'endSession'])->name('kiosk.session-end');
     Route::patch('/{kiosk}/end', [KioskController::class, 'endSession'])->name('kiosk.end');
+    Route::post('/{kiosk}/bucks', [KioskController::class, 'giveBucks'])->name('kiosk.give-bucks');
 
     // kiosk student actions (edit profile, update pin, make a purchase etc.)
     Route::get('/{kiosk}/student', [KioskController::class, 'selectStudentIndex'])->name('kiosk.student.index');
@@ -88,8 +94,6 @@ Route::prefix('kiosk')->group(function () {
     Route::post('/{kiosk}/student/{student}/purchase-theme', [KioskController::class, 'purchaseTheme'])->name('kiosk.student.purchase-theme');
     Route::post('/{kiosk}/student/{student}/purchase-rename', [KioskController::class, 'purchaseRename'])->name('kiosk.student.purchase-rename');
     Route::post('/{kiosk}/student/{student}/change-pin', [KioskController::class, 'changePin'])->name('kiosk.student.change-pin');
-    //todo: route na studentské zobrazení bez kiosku, dostupné od učitele, poté učitele odhlásit
-
 });
 
 

@@ -34,8 +34,8 @@
 {{--                        </div>--}}
 
                         <div class="hidden sm:block">
-                            <img src="https://robohash.org/YOUR-TEXT.png?size=28x28&set=set5" alt="{{ __('profile picture') }}" class="w-7 inline-block rounded-full bg-rose-300 me-2">
-                            {{ auth()->user()->first_name }}&nbsp;{{ auth()->user()->last_name }}
+                            <img src="{{ asset('assets/img/avatars/' . auth()->user()->avatar) }}" alt="{{ __('profile picture') }}" class="w-7 inline-block rounded-full bg-gradient-dark me-2">
+                            <a href="{{ route('profile.edit') }}" class="hover:underline">{{ auth()->user()->first_name }}&nbsp;{{ auth()->user()->last_name }}</a>
                         </div>
 
                         {{--může být přesunuto -- musí být na každé stránce--}}

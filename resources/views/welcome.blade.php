@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <div class="max-w-full w-full absolute top-0 -z-0 sm:min-h-[50vh] min-h-dvh" style="background-image: url('{{ asset('assets/img/backgrounds/pattern'. rand(1, 18) .'.png') }}')">
+    <div class="max-w-full w-full absolute top-0 -z-0 sm:min-h-[50vh] min-h-dvh" style="background-image: url('{{ asset('assets/img/backgrounds/'. collect(config('school.cosmetics.backgrounds'))->random() ) }}')">
         <span class="mask bg-gradient-dark opacity-80"></span>
     </div>
 

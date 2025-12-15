@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Edugroup;
 use App\Models\Student;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -42,7 +42,7 @@ class StudentController extends Controller
         $validated = $request->validate([
             'first_name' => ['required', 'alpha_dash', 'max:255'],
             'last_name' => ['required', 'alpha_dash', 'max:255'],
-            'nickname' => ['required', 'alpha_dash:ascii', 'max:50', 'unique:students,nickname'],
+            'nickname' => ['required', 'alpha_dash', 'min:4', 'max:50', 'unique:students,nickname'],
             'birth_date' => ['required', 'date'],
             'access_pin' => ['required', 'integer:strict', 'digits:4'],
         ]);
@@ -73,7 +73,10 @@ class StudentController extends Controller
     public function edit(Student $student)
     {
         return view('student.edit', [
-            'student' => $student
+            'student' => $student,
+            'edugroups' => Edugroup::orderBy('core', 'desc')
+                ->orderBy('name', 'asc')
+                ->get(),
         ]);
     }
 
@@ -85,7 +88,7 @@ class StudentController extends Controller
         $validated = $request->validate([
             'first_name' => ['required', 'alpha_dash', 'max:255'],
             'last_name' => ['required', 'alpha_dash', 'max:255'],
-            'nickname' => ['required', 'alpha_dash:ascii', 'max:50', Rule::unique('students')->ignore($student)],
+            'nickname' => ['required', 'alpha_dash', 'min:4', 'max:50', Rule::unique('students')->ignore($student)],
             'birth_date' => ['required', 'date'],
             'access_pin' => ['required', 'integer:strict', 'digits:4'],
         ]);
@@ -93,7 +96,7 @@ class StudentController extends Controller
         $student->fill($validated);
         $student->save();
 
-        redirect()->route('student.show', $student)->with('notification', 'Student updated successfully.');
+        return redirect()->route('student.show', $student)->with('notification', 'Student information updated successfully.');
     }
 
     /**
@@ -101,6 +104,19 @@ class StudentController extends Controller
      */
     public function destroy(Student $student)
     {
-        //
+        //$student->delete();
+    }
+
+    public function updateEdugroups(Request $request, Student $student) {
+        // Validate that users[] is an array of existing IDs
+        $validated = $request->validate([
+            'edugroups' => 'array',
+            'edugroups.*' => 'exists:edugroups,id',
+        ]);
+
+        // Sync updates the pivot table — adds new, removes unchecked
+        $student->edugroups()->sync($validated['edugroups'] ?? []);
+
+        return redirect()->route('student.show', $student)->with('notification', 'Groups updated successfully.');
     }
 }

@@ -15,9 +15,14 @@
             @if(isset($showNickname) && $showNickname)
                 <span class="">{{ $student->nickname }}</span>
             @else
-                <span class="uppercase">{{ $student->first_name }}</span><span class="text-gray-500"> {{ $student->last_name }}</span>
+                <span class="uppercase">{{ $student->first_name }}</span><span class="text-slate-500"> {{ $student->last_name }}</span>
             @endif
         </p>
-        <p class="text-slate-400 text-xs">{{ __('Level') }} {{ $student->getLevel() }}</p>
+        <p class="text-slate-400 text-xs">
+            {{ __('Level') }} {{ $student->getLevel() }}
+            @if(isset($showBucks) && $showBucks)
+                &middot; <span class="text-slate-600">{{ $student->bucks }} <i class="fa-solid fa-money-bill"></i></span>
+            @endif
+        </p>
     </div>
 </div>

@@ -19,12 +19,12 @@ $theme = $theme ?? ($student->theme ?? 'dark');
          background-repeat: repeat"
     @endif
     {{ $attributes->merge([
-       'class' => "flex justify-center rounded-xl bg-white " . ($nobg ? "" : " bg-gradient-$theme ") . ($interactive ? ' cursor-pointer transition-all hover:scale-105 hover:shadow-lg ' : '')
+       'class' => "flex justify-center rounded-xl bg-white overflow-hidden " . ($nobg ? "" : " bg-gradient-$theme ") . ($interactive ? ' cursor-pointer transition-all hover:scale-105 hover:shadow-lg ' : '')
    ]) }}>
 
     @if(!$slot->isEmpty())
         {{ $slot }}
     @else
-        <img src="{{ asset('assets/img/avatars/' . $img) }}" alt="{{ __(':name\'s profile picture', ['name' => $student->nickname]) }}" class="">
+        <img src="{{ asset('assets/img/avatars/' . $img) }}" alt="{{ __(':name\'s profile picture', ['name' => $student->nickname]) }}">
     @endif
 </div>

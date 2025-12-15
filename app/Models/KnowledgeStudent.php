@@ -18,4 +18,14 @@ class KnowledgeStudent extends Pivot
     {
         return $this->belongsTo(KnowledgeLevel::class, 'level_id');
     }
+
+    public function knowledge() :\Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Knowledge::class, 'knowledge_id');
+    }
+
+    public function student() :\Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Student::class, 'student_id');
+    }
 }

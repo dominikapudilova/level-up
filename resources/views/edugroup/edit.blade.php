@@ -49,18 +49,6 @@
                 @csrf
                 @method('PUT')
 
-                {{--@foreach($students as $student)
-                    <div>
-                        <label>
-                            <input type="checkbox"
-                                   name="users[]"
-                                   value="{{ $student->id }}"
-                                   @checked($edugroup->students->contains($student))>
-                            {{ $student->last_name }}&nbsp;{{ $student->first_name }}
-                        </label>
-                    </div>
-                @endforeach--}}
-
                 <div
                     x-data="AppHelpers.studentGroupAssignment({
                         available: {{ $students->diff($edugroup->students)->values() }},

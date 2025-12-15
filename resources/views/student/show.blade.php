@@ -10,19 +10,17 @@
 
     <x-cover-image/>
 
-    <div class="min-h-28 max-h-28 -mt-14 sm:mx-10 mx-4 p-4 bg-white bg-milky-glass shadow-lg rounded-xl  space-x-4 mb-4 flex flex-row">
-        <img src="https://robohash.org/admin-istrator.png?set=set5" alt="{{ __('profile picture') }}" class="rounded-xl bg-rose-300 block h-full">
+    <div class="min-h-28 max-h-28 -mt-14 sm:mx-10 mx-4 p-4 bg-white bg-milky-glass shadow-lg rounded-xl  space-x-4 mb-4 flex flex-row items-center">
+        <x-student-profile-pic class="self-stretch" :student="$student"/>
         <div class="m-auto text-slate-600 flex-grow">
             <h3 class="text-lg font-semibold">{{ $student->first_name }}&nbsp;{{ $student->last_name }}</h3>
-            <h4 class="text-slate-400">{{ __('Student') }}</h4>
+            <h4 class="text-slate-400">{{ __('Student') }} {{ __('lvl') }} {{ $student->getLevel() }}</h4>
         </div>
-        <x-button-dark class="m-auto sm:block hidden">Přihlásit jako</x-button-dark>
-        <x-button-dark class="m-auto sm:block hidden" :href="route('student.edit', $student)">Editovat</x-button-dark>
+        <x-button-dark class="sm:block hidden" :href="route('student.edit', $student)">{{ __('Edit') }}</x-button-dark>
     </div>
 
     <div class="sm:hidden block mx-4 mb-4">
-        <x-button-dark class="m-auto">Přihlásit jako</x-button-dark>
-        <x-button-dark class="m-auto" :href="route('student.edit', $student)">Editovat</x-button-dark>
+        <x-button-dark class="m-auto" :href="route('student.edit', $student)">{{ __('Edit') }}</x-button-dark>
     </div>
 
     <div class="flex sm:flex-row flex-col gap-4 sm:mx-4 mx-0">
@@ -45,6 +43,8 @@
                         </button>
                     </p>
                 </div>
+
+                <p><span class="font-semibold">{{ __('Progress to next level') }}:</span> {{ $student->getExpToNextLevel() }}/{{ config('school.economy.exp_per_level') }} {{ __('exp') }}</p>
             </div>
         </x-card>
 
@@ -69,15 +69,24 @@
         </x-card>
 
         <x-card class="text-sm sm:w-1/3">
-            <h5 class="text-slate-600 text-base mb-4">{{ __('Achieved knowledge') }}</h5>
+            <h5 class="text-slate-600 text-base mb-4">{{ __('Game progress') }}</h5>
+
+            <div class="space-y-4 w-full">
+                <p><span class="font-semibold">{{ __('Level') }}:</span> {{ $student->getLevel() }}</p>
+                <p><span class="font-semibold">{{ __('Experience points') }}:</span> {{ $student->exp }} <i class="fa-solid fa-star-half-stroke"></i> </p>
+                <p><span class="font-semibold">{{ __('Remaining to next level') }}:</span> {{ $student->getExpToNextLevel() }} <i class="fa-solid fa-star-half-stroke"></i> </p>
+                <p><span class="font-semibold">{{ __('Brain bucks') }}:</span> {{ $student->bucks }} <i class="fa-solid fa-money-bill"></i></p>
+                <p><span class="font-semibold">{{ __('Knowledge count') }}:</span> {{ $student->knowledge->count() }} <i class="fa-solid fa-graduation-cap"></i></p>
+            </div>
 
         </x-card>
     </div>
 
-    <x-card class="text-sm m-4">
+    <x-card class="text-sm sm:m-4 mt-4">
         <h5 class="text-slate-600 text-base mb-4">{{ __('Achieved knowledge') }}</h5>
         @forelse($student->knowledge as $knowledge)
             <div class="">
+                <img src="{{ asset('assets/img/knowledge-icons/' . $knowledge->pivot->level->icon) }}" alt="{{ $knowledge->pivot->level->name }}" class="w-4 h-4 me-1 inline-block">
                 <a class="hover:underline" href="{{ route('edufield.edit', $knowledge->subcategory->category->edufield) }}">{{ $knowledge->subcategory->category->edufield->name }}</a> >
                 <a class="hover:underline" href="{{ route('category.edit', $knowledge->subcategory->category) }}">{{ $knowledge->subcategory->category->name }}</a> >
                 <a class="hover:underline" href="{{ route('subcategory.edit', $knowledge->subcategory) }}">{{ $knowledge->subcategory->name }}</a> >

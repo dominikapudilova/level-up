@@ -1,15 +1,20 @@
 <x-kiosk-layout>
 
-    <div class="max-w-full w-full absolute top-0 -z-0 sm:min-h-[50vh] min-h-dvh" style="background-image: url('{{ asset('assets/img/backgrounds/pattern'. rand(1, 9) .'.png') }}')">
+    <div class="max-w-full w-full absolute top-0 -z-0 h-full min-h-dvh" style="background-image: url('{{ asset('assets/img/backgrounds/'. collect(config('school.cosmetics.backgrounds'))->random() ) }}')">
         <span class="mask bg-gradient-dark opacity-80"></span>
     </div>
 
     <main class="z-10 text-center sm:pt-12 pt-10 w-full max-w-7xl relative" x-data="{ selectedStudentRoute: '', selectedStudentName: '' }">
-        <img alt="{{ __('app logo') }}" src="{{ asset('assets/img/icon-fullsize.png') }}" class="w-28 m-auto">
+        <a href="{{ route('kiosk.session', $kiosk) }}" class="m-auto inline-block">
+            <img alt="{{ __('app logo') }}" src="{{ asset('assets/img/icon-fullsize.png') }}" class="w-28 ">
+        </a>
         <h1 class="font-bold leading-none tracking-tighter text-white text-4xl">{{ __('Select your account') }}</h1>
         <p class="text-white text-2xl">{{ __('and log in with PIN') }}</p>
 
         <div class="absolute top-2 right-auto sm:right-0 flex sm:flex-col flex-row gap-2 sm:ms-auto ms-2">
+            <x-button-dark href="{{ route('kiosk.session', $kiosk) }}" class="w-full">
+                {{ __('Return to class session') }}
+            </x-button-dark>
             <x-button-dark href="/" class="w-full">
                 {{ __('Leave kiosk') }}
             </x-button-dark>

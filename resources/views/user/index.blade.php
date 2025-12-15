@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div>
             <h2 class="ms-2 inline-block font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('View all groups') }}
+                {{ __('View all users') }}
             </h2>
         </div>
     </x-slot>
@@ -21,39 +21,37 @@
         </div>
 
         <div class="mb-4 mx-4">
-            <x-button-dark class="" :href="route('edugroup.create')"> {{ __('Add new group') }} </x-button-dark>
+            <x-button-dark class="" :href="route('user.create')"> {{ __('Create new user') }} </x-button-dark>
         </div>
 
-        <x-card class="sm:mx-4">
-            @if($edugroups->isEmpty())
-                <p>{{ __('No groups were found! Create a new one.') }}</p>
-                <x-button-dark class="mt-2" :href="route('edugroup.create')"> {{ __('Add new group') }} </x-button-dark>
+        <x-card class="sm:mx-4 mt-4">
+            @if($users->isEmpty())
+                <p>{{ __('No users were found! Create a new one.') }}</p>
             @else
                 <table class="w-full">
                     <thead>
                     <tr class="text-slate-400 uppercase text-xs border-b border-slate-200">
                         <td class="pb-2">{{ __('Name') }}</td>
-                        <td class="pb-2">{{ __('Core') }}</td>
-                        <td class="pb-2"><i class="fa-solid fa-users"></i></td>
+                        <td class="pb-2">{{ __('Username') }}</td>
+                        <td class="pb-2">{{ __('Admin') }}</td>
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach($edugroups as $group)
+                    @foreach($users as $user)
                         <tr class="hover:bg-slate-100"
                             x-show="searchedName === '' ||
-                                 '{{ $group->name }}'
+                                 '{{ $user->first_name }} {{ $user->last_name }}'
                                     .toLowerCase()
                                     .includes(searchedName.toLowerCase())">
                             <td>
-                                <a class="hover:underline" href="{{ route('edugroup.edit', $group) }}">
-                                    {{ $group->name }}&nbsp;
-                                    <span class="text-slate-400 text-xs">({{ $group->year_founded }})</span>
-                                </a>
+                                <div class="inline-block align-middle">
+                                    <x-student-profile-pic :student="$user" class="me-1 w-6 h-6 align-middle"/>
+                                </div>
+                                <a class="hover:underline"
+                                   href="{{ route('user.show', $user) }}">{{ $user->first_name }} {{ $user->last_name }}</a>
                             </td>
-                            <td>@if($group->core)
-                                    <i class="fa-solid fa-check"></i>
-                                @endif</td>
-                            <td>{{ $group->students->count() }}</td>
+                            <td>{{ $user->username }}</td>
+                            <td>{{ $user->isAdmin() }}</td>
                         </tr>
                     @endforeach
                     </tbody>

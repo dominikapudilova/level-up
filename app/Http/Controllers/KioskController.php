@@ -112,7 +112,7 @@ class KioskController extends Controller
         $validated = $request->validate([
             'pin' => 'required|string|min:4|max:20',
         ]);
-        $this->checkPin($validated['pin'], $teacher->pin);
+        $this->checkPin($validated['pin'], $teacher->pin, 'confirmEndSession');
 
         $kiosk->ended_at = now();
         $kiosk->save();
@@ -230,7 +230,11 @@ class KioskController extends Controller
             'course' => $kiosk->course,
 //            'edufields' => Edufield::orderBy('name')->get(),
             'edufields' => $this->collectEdufieldsFromCourseKnowledge($kiosk->course),
-            'knowledgeLevels' => KnowledgeLevel::all()
+            'knowledgeLevels' => KnowledgeLevel::all(),
+            'history' => KnowledgeStudent::where('kiosk_id', $kiosk->id)
+                ->with(['knowledge', 'level', 'student'])
+                ->orderBy('created_at', 'desc')
+                ->get(),
         ]);
     }
 
@@ -283,7 +287,7 @@ class KioskController extends Controller
         ]);
 
         // check user's PIN
-        $this->checkPin($validated['pin'], $kiosk->teacher->pin);
+        $this->checkPin($validated['pin'], $kiosk->teacher->pin, 'confirmGiveKnowledge');
 
         // save knowledge for each student
         $knowledge = Knowledge::findOrFail($validated['knowledge_id']);
@@ -304,12 +308,49 @@ class KioskController extends Controller
             ]);
 
             // give experience
+            $levelBefore = $student->getLevel();
             $student->exp += $level->weight;
+
+            // give coins for level up
+            if ($student->getLevel() > $levelBefore) $student->bucks += config('school.economy.bucks_per_level_up', 1);
+
             $student->save();
         }
 
         return redirect()->route('kiosk.session', $kiosk)
             ->with('notification', __('Knowledge given successfully to selected students.'));
+    }
+
+    public function giveBucks(Request $request, KioskSession $kiosk) {
+        $bucksPerTransaction = config('school.economy.max_bucks_given_per_transaction', 20);
+        $validated = $request->validate([
+            'pin' => 'required|string|min:4|max:20',
+            'students' => 'required|array|min:1',
+            'students.*' => 'exists:students,id',
+            'bucks' => "required|integer|min:-$bucksPerTransaction|max:$bucksPerTransaction",
+        ]);
+
+        // check user's PIN
+        $this->checkPin($validated['pin'], $kiosk->teacher->pin, 'confirmGiveBucks');
+
+        // give bucks to each student
+        $studentIds = $validated['students'];
+        $amount = $validated['bucks'];
+
+        foreach ($studentIds as $studentId) {
+            $student = Student::find($studentId);
+
+            // give experience (or remove)
+            if ($amount < 0 && ($student->bucks + $amount) < 0) {
+                $student->bucks = 0;
+            } else {
+                $student->bucks += $amount;
+            }
+            $student->save();
+        }
+
+        return redirect()->route('kiosk.session', $kiosk)
+            ->with('notification', __('Successfully given :amount Brain Bucks to selected students.', ['amount' => $amount]));
     }
 
     // pages for students ...
@@ -509,10 +550,10 @@ class KioskController extends Controller
             ->with('notification', __('Theme changed successfully.'));
     }
 
-    private function checkPin($pin, $usersPin) {
+    private function checkPin($pin, $usersPin, $errorBag = 'default') {
         // check user's PIN
         if ($pin !== $usersPin) {
-            throw ValidationException::withMessages(['pin' => __('The provided PIN is incorrect.')]);
+            throw ValidationException::withMessages(['pin' => __('The provided PIN is incorrect.')])->errorBag($errorBag);
         }
     }
 }

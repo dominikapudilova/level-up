@@ -12,7 +12,6 @@ return [
     'year_start' => '09-01',  // mm-dd
     'year_end' => '06-30',
 
-
     /*
     |--------------------------------------------------------------------------
     | Class / Edugroup Settings (ALL UNUSED)
@@ -32,8 +31,10 @@ return [
     |--------------------------------------------------------------------------
     */
     'economy' => [
-        'xp_per_level' => 100,
+        'exp_per_level' => 10,
 //        'bucks_name' => 'Brain Bucks',
+        'max_bucks_given_per_transaction' => 20,
+        'bucks_per_level_up' => 1,
 
         'prices' => [
             'rename' => 40,

@@ -19,7 +19,8 @@ class ProfileUpdateRequest extends FormRequest
         return [
             'first_name' => ['string', 'max:255'],
             'last_name' => ['string', 'max:255'],
-            'pin' => ['confirmed', 'nullable', 'string', 'min:4', 'max:20'],
+            'pin' => ['confirmed', 'string', 'min:4', 'max:20'],
+            'avatar' => ['string'],
 //            'old_pass' => ['nullable', 'string', 'current_password'],
 //            'new_pass' => ['nullable', 'string', 'min:8', Rules\Password::defaults()], //'confirmed'
             /*'email' => [

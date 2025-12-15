@@ -11,9 +11,7 @@
     <x-cover-image/>
 
     <div class="min-h-28 max-h-28 -mt-14 sm:mx-10 mx-4 p-4 bg-white bg-milky-glass shadow-lg rounded-xl  space-x-4 mb-4 flex flex-row">
-        <a href="{{ route('student.show', $student) }}">
-            <img src="https://robohash.org/admin-istrator.png?set=set5" alt="{{ __('profile picture') }}" class="rounded-xl bg-rose-300 block h-full">
-        </a>
+        <x-student-profile-pic class="self-stretch" :student="$student" />
         <div class="m-auto text-slate-600 flex-grow">
             <a href="{{ route('student.show', $student) }}">
                 <h3 class="text-lg font-semibold">{{ $student->first_name }}&nbsp;{{ $student->last_name }}</h3>
@@ -65,8 +63,27 @@
         </x-card>
 
         <x-card class="text-sm sm:mx-0 sm:w-1/2 ">
-            <h5 class="text-slate-600 text-base mb-4">{{ __('Přeložit do jiné třídy') }}</h5>
-            <h5 class="text-slate-600 text-base mb-4">{{ __('Upravit žákovy skupiny') }}</h5>
+            <h5 class="text-slate-600 text-base mb-4">{{ __('Edit student\'s education groups') }}</h5>
+
+            <form action="{{ route('student.update-edugroups', $student) }}" method="POST">
+                @csrf
+                @method('PUT')
+
+                <div class="overflow-y-scroll p-1">
+                    @foreach($edugroups as $group)
+                        <div>
+                            <label>
+                                <input type="checkbox" name="edugroups[]" value="{{ $group->id }}"
+                                    @checked($student->edugroups->contains($group))>
+                                {{ $group->name }}&nbsp;@if($group->core)
+                                    <i class="ms-1 text-xs fa-solid fa-circle-check"></i>
+                                @endif
+                            </label>
+                        </div>
+                    @endforeach
+                </div>
+                <x-button-dark class="float-end mt-4">{{ __('Save') }}</x-button-dark>
+            </form>
         </x-card>
     </div>
 

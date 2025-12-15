@@ -1,7 +1,4 @@
 <x-kiosk-layout>
-    @php
-        $buckHtml = view('components.buck')->render();
-    @endphp
 
     <div class="max-w-full w-full absolute top-0 -z-0 min-h-dvh h-full" style="@if($student->background_image) background-image: url('{{ asset('assets/img/backgrounds/' . $student->background_image) }}') @endif">
         <span class="mask bg-gradient-{{ $student->theme }} opacity-80"></span>
@@ -9,11 +6,14 @@
 
     @php
     $studentLvl = $student->getLevel();
-    $studentLvlPercent = round(((\App\Models\Student::EXP_PER_LEVEL - $student->getExpToNextLevel()) / \App\Models\Student::EXP_PER_LEVEL) * 100, 0);
+    $expPerLevel = config('school.economy.exp_per_level');
+    $studentLvlPercent = round((($expPerLevel - $student->getExpToNextLevel()) / $expPerLevel) * 100, 0);
     @endphp
 
     <main class="z-10 text-center sm:pt-12 pt-10 mb-10 w-full max-w-7xl flex flex-col relative" x-data="{ selectedPfp: '', selectedBg: '', selectedTheme: '' }">
-        <img alt="{{ __('app logo') }}" src="{{ asset('assets/img/icon-fullsize.png') }}" class="w-28 m-auto">
+        <a href="{{ route('kiosk.session', $kiosk) }}" class="m-auto inline-block">
+            <img alt="{{ __('app logo') }}" src="{{ asset('assets/img/icon-fullsize.png') }}" class="w-28 ">
+        </a>
         <h1 class="font-bold leading-none tracking-tighter text-white text-4xl">{{ __('Welcome, :name', ['name' => $student->nickname]) }}</h1>
 
         <div class="absolute top-2 right-auto sm:right-0 flex sm:flex-col flex-row gap-2 sm:ms-auto ms-2">

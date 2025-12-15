@@ -13,7 +13,7 @@
     <ul class="p-4 sm:space-y-2 space-y-1">
         <li><x-button-dark class="w-full" :href="route('kiosk.create')">{{ __('Start lesson') }}</x-button-dark></li>
         <li><x-nav-link class="" :href="route('dashboard')" :active="request()->routeIs('dashboard')">{{ __('Dashboard') }}</x-nav-link></li>
-        <li><x-nav-link class="" :href="route('dashboard')" :active="request()->routeIs('/')">{{ __('My students') }}</x-nav-link></li>
+{{--        <li><x-nav-link class="" :href="route('dashboard')" :active="request()->routeIs('/')">{{ __('My students') }}</x-nav-link></li>--}}
         @can('admin')
             <li><x-nav-link class="" :href="route('students.manage')" :active="request()->routeIs('students.manage')">{{ __('Manage students') }}</x-nav-link></li>
         @endcan
@@ -25,15 +25,14 @@
                 <h6 class="p-2 uppercase text-xs font-normal text-slate-400">{{ __('Administrace') }}</h6>
             </li>
             <li>
-                <x-nav-link class="" :href="route('dashboard')" :active="request()->routeIs('/')">{{ __('Configuration') }}</x-nav-link>
-                <x-nav-link class="" :href="route('dashboard')" :active="request()->routeIs('/')">{{ __('Manage users') }}</x-nav-link>
+{{--                <x-nav-link class="" :href="route('dashboard')" :active="request()->routeIs('/')">{{ __('Configuration') }}</x-nav-link>--}}
+                <x-nav-link class="" :href="route('user.index')" :active="request()->routeIs('user.index')">{{ __('Manage users') }}</x-nav-link>
             </li>
         @endcan
         <li>
             <h6 class="p-2 uppercase text-xs font-normal text-slate-400">{{ __('User') }}</h6>
         </li>
         <li><x-nav-link class="" :href="route('profile.edit')" :active="request()->routeIs('profile.edit')">{{ __('Profile') }}</x-nav-link></li>
-        <li><x-nav-link class="" :href="route('dashboard')" :active="request()->routeIs('/')">{{ __('Settings') }}</x-nav-link></li>
         <li>
             <form method="POST" action="{{ route('logout') }}" class="w-full">
                 @csrf
