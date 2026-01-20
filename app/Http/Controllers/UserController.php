@@ -14,9 +14,6 @@ class UserController extends Controller
      */
     public function index()
     {
-        if (!Gate::allows('admin')) {
-            abort(403);
-        }
         return view('user.index', [
             'users' => User::all()->sortBy([
                 ['last_name', 'asc'],
@@ -38,10 +35,6 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Gate::allows('admin')) {
-            abort(403);
-        }
-
         $validated = $request->validate([
             'first_name' => ['string', 'max:255'],
             'last_name' => ['string', 'max:255'],
@@ -61,9 +54,6 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        if (!Gate::allows('admin')) {
-            abort(403);
-        }
         return view('user.show', [
             'user' => $user
         ]);
@@ -87,9 +77,6 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        if (!Gate::allows('admin')) {
-            abort(403);
-        }
         $validated = $request->validate([
             'first_name' => ['string', 'max:255'],
             'last_name' => ['string', 'max:255'],
@@ -106,7 +93,7 @@ class UserController extends Controller
         $user->fill($validated);
         $user->save();
 
-        return redirect()->route('user.show', $user)->with('notification', 'User information updated successfully.');
+        return redirect()->route('user.show', $user)->with('notification', __('User information updated successfully.'));
     }
 
     /**
@@ -114,9 +101,6 @@ class UserController extends Controller
      */
     public function destroy(Request $request, User $user)
     {
-        if (!Gate::allows('admin')) {
-            abort(403);
-        }
         if (auth()->user() == $user) {
             return redirect()->route('user.edit', $user)->withErrors(__('You cannot delete your own account.'));
         }

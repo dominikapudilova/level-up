@@ -265,6 +265,9 @@
     "Yes": "Ano",
     "No": "Ne",
     "You cannot delete your own account.": "Nemůžete smazat svůj vlastní účet.",
+    "No groups were found! Create a new one.": "Žádné skupiny nebyly nalezeny! Vytvořte novou.",
+    "You have not given any knowledge during this session.": "V průběhu této hodiny jste neudělili žádné znalosti.",
+    "Not assigned to any groups.": "Nezařazen do žádných skupin.",
     "Back": "Zpět",
     "Update": "Aktualizovat"
 }

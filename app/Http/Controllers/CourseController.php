@@ -119,7 +119,7 @@ class CourseController extends Controller
         // Sync updates the pivot table — adds new, removes unchecked
         $course->edugroups()->sync($validated['edugroups'] ?? []);
 
-        return redirect()->route('course.edit', $course)->with('notification', 'Groups updated successfully.');
+        return redirect()->route('course.edit', $course)->with('notification', __('Groups updated successfully.'));
     }
 
     public function updateKnowledge(Request $request, Course $course) {
@@ -131,7 +131,7 @@ class CourseController extends Controller
         // Sync updates the pivot table — adds new, removes unchecked
         $course->knowledge()->sync($validated['knowledge'] ?? []);
 
-        return redirect()->route('course.edit', $course)->with('notification', 'Knowledge updated successfully.');
+        return redirect()->route('course.edit', $course)->with('notification', __('Knowledge updated successfully.'));
     }
 
     public function removeKnowledge(Request $request, Course $course) {

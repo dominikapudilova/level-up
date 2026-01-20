@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div>
-            <a href="{{ route('students.manage') }}" class="hover:underline">&laquo;&nbsp;{{ __('Back') }}</a>
+            <a href="{{ route('student.index') }}" class="hover:underline">&laquo;&nbsp;{{ __('Back') }}</a>
             <h2 class="ms-2 inline-block font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Add new student') }}
             </h2>

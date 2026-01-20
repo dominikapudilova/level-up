@@ -1,7 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
         <div>
-            <a href="{{ route('students.manage') }}" class="hover:underline">&laquo;&nbsp;{{ __('Back') }}</a>
             <h2 class="ms-2 inline-block font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('View all students') }}
             </h2>
@@ -20,6 +19,12 @@
                 <x-input-text class="w-full" x-model="searchedName"/>
             </div>
         </div>
+
+        @can('admin')
+        <div class="mb-4 mx-4">
+            <x-button-dark :href="route('student.create')">{{ __('Add new student') }}</x-button-dark>
+        </div>
+        @endcan
 
         <x-card class="sm:mx-4 mt-4">
             @if($students->isEmpty())

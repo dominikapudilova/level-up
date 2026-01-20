@@ -130,6 +130,6 @@ class EdugroupController extends Controller
         // Sync updates the pivot table — adds new, removes unchecked
         $edugroup->students()->sync($validated['students'] ?? []);
 
-        return redirect()->route('edugroup.edit', $edugroup)->with('notification', 'Student list updated successfully.');
+        return redirect()->route('edugroup.edit', $edugroup)->with('notification', __('Student list updated successfully.'));
     }
 }

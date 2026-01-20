@@ -13,10 +13,15 @@
     <div class="min-h-28 max-h-28 -mt-14 sm:mx-10 mx-4 p-4 bg-white bg-milky-glass shadow-lg rounded-xl  space-x-4 mb-4 flex flex-row items-center">
         <x-student-profile-pic class="self-stretch" :student="$student"/>
         <div class="m-auto text-slate-600 flex-grow">
-            <h3 class="text-lg font-semibold">{{ $student->first_name }}&nbsp;{{ $student->last_name }}</h3>
+            <h3 class="text-lg font-semibold">
+                {{ $student->first_name }}&nbsp;{{ $student->last_name }}
+                @cannot('admin')<span class="text-gray-400">({{ $student->nickname }})</span>@endcannot
+            </h3>
             <h4 class="text-slate-400">{{ __('Student') }} {{ __('lvl') }} {{ $student->getLevel() }}</h4>
         </div>
+        @can('admin')
         <x-button-dark class="sm:block hidden" :href="route('student.edit', $student)">{{ __('Edit') }}</x-button-dark>
+        @endcan
     </div>
 
     <div class="sm:hidden block mx-4 mb-4">
@@ -24,6 +29,7 @@
     </div>
 
     <div class="flex sm:flex-row flex-col gap-4 sm:mx-4 mx-0">
+        @can('admin')
         <x-card class="text-sm sm:w-1/3">
             <h5 class="text-slate-600 text-base mb-4">{{ __('Basic information') }}</h5>
             <div class="space-y-4 w-full">
@@ -44,9 +50,9 @@
                     </p>
                 </div>
 
-                <p><span class="font-semibold">{{ __('Progress to next level') }}:</span> {{ $student->getExpToNextLevel() }}/{{ config('school.economy.exp_per_level') }} {{ __('exp') }}</p>
             </div>
         </x-card>
+        @endcan
 
         <x-card class="text-sm sm:w-1/3">
             <h5 class="text-slate-600 text-base mb-4">{{ __('Groups & courses') }}</h5>

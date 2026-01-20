@@ -14,7 +14,6 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-//    return view('welcome');
     return redirect()->route('login');
 });
 
@@ -23,15 +22,17 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-//    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // todo: for admin only
+    // admin only
     Route::resource('user', UserController::class)->names('user')
-        ->only(['index', 'create', 'store', 'show', 'edit', 'update', 'destroy']);
+        ->only(['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'])->middleware('can:admin');
 
-    Route::get('/students', [StudentController::class, 'manageStudents'])->name('students.manage');
     Route::resource('student', StudentController::class)->names('student')
-        ->only(['index', 'create', 'store', 'show', 'edit', 'update']); //destroy
+        ->only(['edit', 'update'])->middleware('can:admin');; //destroy
+    // end admin only
+
+    Route::resource('student', StudentController::class)->names('student')
+        ->only(['index', 'create', 'store', 'show']);
     Route::put('/student/{student}/update-edugroups', [StudentController::class, 'updateEdugroups'])->name('student.update-edugroups');
 
     Route::resource('edugroup', EdugroupController::class)->names('edugroup')
@@ -66,26 +67,19 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::prefix('kiosk')->group(function () {
-    // verify pin
-//    Route::get('/{kiosk}/login', [KioskController::class, 'showLogin']);
-//    Route::post('/{kiosk}/login', [KioskController::class, 'verifyPin']);
-//    Route::post('/{kiosk}/logout', [KioskController::class, 'logout']);
 
     // kiosk attendance
     Route::get('/{kiosk}/attendance', [KioskController::class, 'attendance'])->name('kiosk.attendance');
     Route::post('/{kiosk}/attendance', [KioskController::class, 'storeAttendance'])->name('kiosk.store-attendance');
-//    Route::get('/{kiosk}/attendance/edit', [KioskController::class, 'editAttendance'])->name('kiosk.edit-attendance');
 
     // kiosk session
     Route::get('/{kiosk}/session', [KioskController::class, 'kioskSession'])->name('kiosk.session');
     Route::post('/{kiosk}/knowledge', [KioskController::class, 'giveKnowledge'])->name('kiosk.give-knowledge');
-//    Route::post('/{kiosk}/session-end', [KioskController::class, 'endSession'])->name('kiosk.session-end');
     Route::patch('/{kiosk}/end', [KioskController::class, 'endSession'])->name('kiosk.end');
     Route::post('/{kiosk}/bucks', [KioskController::class, 'giveBucks'])->name('kiosk.give-bucks');
 
     // kiosk student actions (edit profile, update pin, make a purchase etc.)
     Route::get('/{kiosk}/student', [KioskController::class, 'selectStudentIndex'])->name('kiosk.student.index');
-//    Route::get('/{kiosk}/student/{student}', [KioskController::class, 'showStudent'])->name('kiosk.student.show');
     Route::post('/{kiosk}/student/{student}/edit', [KioskController::class, 'editStudent'])->name('kiosk.student.edit');
     Route::get('/{kiosk}/student/{student}/edit', [KioskController::class, 'editStudentIndex'])->name('kiosk.student.edit-index');
 

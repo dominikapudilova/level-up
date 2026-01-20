@@ -179,7 +179,7 @@
                             <span class="text-slate-400 text-end">{{ \Carbon\Carbon::create($log->updated_at)->format('H:i d.m.') }}</span>
                         </li>
                     @empty
-                        <li>{{ __('You have not given any knowledge during this session.') }}</li>
+                        <li class="text-gray-400">{{ __('You have not given any knowledge during this session.') }}</li>
                     @endforelse
                 </ul>
             </x-card>

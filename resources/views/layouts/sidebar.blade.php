@@ -14,9 +14,7 @@
         <li><x-button-dark class="w-full" :href="route('kiosk.create')">{{ __('Start lesson') }}</x-button-dark></li>
         <li><x-nav-link class="" :href="route('dashboard')" :active="request()->routeIs('dashboard')">{{ __('Dashboard') }}</x-nav-link></li>
 {{--        <li><x-nav-link class="" :href="route('dashboard')" :active="request()->routeIs('/')">{{ __('My students') }}</x-nav-link></li>--}}
-        @can('admin')
-            <li><x-nav-link class="" :href="route('students.manage')" :active="request()->routeIs('students.manage')">{{ __('Manage students') }}</x-nav-link></li>
-        @endcan
+        <li><x-nav-link class="" :href="route('student.index')" :active="request()->routeIs('student.index')">{{ __('Manage students') }}</x-nav-link></li>
         <li><x-nav-link class="" :href="route('edugroup.index')" :active="request()->routeIs('edugroup.index')">{{ __('Manage groups') }}</x-nav-link></li>
         <li><x-nav-link class="" :href="route('course.index')" :active="request()->routeis('course.index')">{{ __('Manage courses') }}</x-nav-link></li>
         <li><x-nav-link class="" :href="route('knowledge.index')" :active="request()->routeis('knowledge.index')">{{ __('Manage knowledge') }}</x-nav-link></li>

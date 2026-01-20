@@ -9,9 +9,6 @@ use Illuminate\Validation\Rule;
 
 class StudentController extends Controller
 {
-    public function manageStudents() {
-        return view('student.manage');
-    }
 
     /**
      * Display a listing of the resource.
@@ -43,17 +40,17 @@ class StudentController extends Controller
             'first_name' => ['required', 'alpha_dash', 'max:255'],
             'last_name' => ['required', 'alpha_dash', 'max:255'],
             'nickname' => ['required', 'alpha_dash', 'min:4', 'max:50', 'unique:students,nickname'],
-            'birth_date' => ['required', 'date'],
+            'birth_date' => ['required', 'date', Rule::date()->beforeToday()],
             'access_pin' => ['required', 'integer:strict', 'digits:4'],
         ]);
 
-        $student = Student::create($validated);
+        Student::create($validated);
 
         $action = $request->input('action');
         if ($action === 'save_new') {
-            return redirect()->route('student.create')->with('notification', 'Student created successfully. You can add another student now.');
+            return redirect()->route('student.create')->with('notification', __('Student created successfully. You can add another student now.'));
         } else {
-            return redirect()->route('student.index')->with('notification', 'Student created successfully.');
+            return redirect()->route('student.index')->with('notification', __('Student created successfully.'));
         }
     }
 
@@ -117,6 +114,6 @@ class StudentController extends Controller
         // Sync updates the pivot table — adds new, removes unchecked
         $student->edugroups()->sync($validated['edugroups'] ?? []);
 
-        return redirect()->route('student.show', $student)->with('notification', 'Groups updated successfully.');
+        return redirect()->route('student.show', $student)->with('notification', __('Groups updated successfully.'));
     }
 }
