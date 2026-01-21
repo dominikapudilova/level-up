@@ -10,13 +10,21 @@
 
     <x-cover-image/>
 
-    <div class="min-h-28 max-h-28 -mt-14 sm:mx-10 mx-4 p-4 bg-white bg-milky-glass shadow-lg rounded-xl  space-x-4 mb-4 flex flex-row">
-        <x-student-profile-pic class="self-stretch" :student="$student" />
+    <div
+        class="min-h-28 max-h-28 -mt-14 sm:mx-10 mx-4 p-4 bg-white bg-milky-glass shadow-lg rounded-xl  space-x-4 mb-4 flex flex-row items-center">
+        @if(auth()->user()->showPhotos() === true)
+            <x-student-profile-pic :student="$student" :showPhoto="true"/>
+        @else
+            <x-student-profile-pic class="self-stretch" :student="$student" :showPhoto="false"/>
+        @endif
         <div class="m-auto text-slate-600 flex-grow">
-            <a href="{{ route('student.show', $student) }}">
-                <h3 class="text-lg font-semibold">{{ $student->first_name }}&nbsp;{{ $student->last_name }}</h3>
-            </a>
-            <h4 class="text-slate-400">{{ __('Student') }}</h4>
+            <h3 class="text-lg font-semibold">
+                {{ $student->first_name }}&nbsp;{{ $student->last_name }}
+                @cannot('admin')
+                    <span class="text-gray-400">({{ $student->nickname }})</span>
+                @endcannot
+            </h3>
+            <h4 class="text-slate-400">{{ __('Student') }} {{ __('lvl') }} {{ $student->getLevel() }}</h4>
         </div>
     </div>
 

@@ -64,8 +64,55 @@ hr {
     box-shadow: inset 0 0 1px 1px hsla(0, 0%, 100%, .9), 0 20px 27px 0 rgba(0, 0, 0, .05) !important
 }
 
+/* toggle pill button */
+.toggle-group {
+    padding-left: 3rem;
+}
 
-/*button.bg-gradient-dark:hover {
-    background-color: #344767;
-    border-color: #344767
-}*/
+.toggle-button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.toggle-button, .toggle-label {
+    cursor: pointer;
+}
+
+.toggle-group .toggle-button {
+    background-color: rgba(58, 65, 111, .1);
+    background-image: none;
+    border: 1px solid #e9ecef;
+    height: 1.25em;
+    position: relative;
+    width: 2.5rem;
+    margin-left: -3rem;
+    border-radius: 2.5rem;
+    float: left;
+    margin-top: 0.135em;
+    vertical-align: top;
+    transition: background-color .25s ease-in-out, border-color .25s ease-in-out;
+}
+
+.toggle-group .toggle-button:after {
+    background-color: #fff;
+    border-radius: 50%;
+    box-shadow: 0 .25rem .375rem -.0625rem hsla(0, 0%, 8%, .12), 0 .125rem .25rem -.0625rem hsla(0, 0%, 8%, .07);
+    content: "";
+    height: 1rem;
+    position: absolute;
+    top: 1px;
+    transform: translateX(1px);
+    transition: transform .25s ease-in-out, background-color .25s ease-in-out;
+    width: 1rem;
+}
+
+.toggle-group .toggle-button:checked {
+    background-color: rgba(58, 65, 111, .95);
+    border-color: rgba(58, 65, 111, .95);
+}
+
+.toggle-group .toggle-button:checked:after {
+    transform: translateX(21px);
+}
+/* end toggle pill button */

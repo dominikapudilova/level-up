@@ -23,7 +23,7 @@ class KioskController extends Controller
      */
     public function index()
     {
-        return view('kiosk.index', [
+        return view('dashboard', [
             'kiosks' => KioskSession::where('teacher_id', auth()->id())
                 ->where('ended_at', null)
                 ->with(['edugroup', 'course'])

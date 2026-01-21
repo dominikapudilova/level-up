@@ -18,10 +18,12 @@ Route::get('/', function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () { return view('dashboard'); })->name('dashboard');
+//    Route::get('/dashboard', function () { return view('dashboard'); })->name('dashboard');
+    Route::get('/dashboard', [KioskController::class, 'index'])->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/togglePhotos', [ProfileController::class, 'toggleShowPhotos'])->name('profile.toggle-photos');
 
     // admin only
     Route::resource('user', UserController::class)->names('user')
@@ -34,6 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('student', StudentController::class)->names('student')
         ->only(['index', 'create', 'store', 'show']);
     Route::put('/student/{student}/update-edugroups', [StudentController::class, 'updateEdugroups'])->name('student.update-edugroups');
+    Route::put('/student/{student}/set-photo', [StudentController::class, 'setPhoto'])->name('student.set-photo');
 
     Route::resource('edugroup', EdugroupController::class)->names('edugroup')
         ->only(['index', 'create', 'store', 'show', 'edit', 'update', 'destroy']);
@@ -58,7 +61,7 @@ Route::middleware('auth')->group(function () {
         ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']); //, 'show', , ,
 
     Route::resource('kiosk', KioskController::class)->names('kiosk')
-        ->only(['index', 'create', 'store']); //'show', 'edit', 'update', 'destroy'
+        ->only(['create', 'store']); //'show', 'edit', 'update', 'destroy'
 
     Route::get('kiosk/search-courses', [KioskController::class, 'searchCourses'])->name('kiosk.search-courses');
 

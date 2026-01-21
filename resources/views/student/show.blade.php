@@ -11,7 +11,11 @@
     <x-cover-image/>
 
     <div class="min-h-28 max-h-28 -mt-14 sm:mx-10 mx-4 p-4 bg-white bg-milky-glass shadow-lg rounded-xl  space-x-4 mb-4 flex flex-row items-center">
-        <x-student-profile-pic class="self-stretch" :student="$student"/>
+        @if(auth()->user()->showPhotos() === true)
+            <x-student-profile-pic :student="$student" :showPhoto="true" />
+        @else
+            <x-student-profile-pic class="self-stretch" :student="$student" :showPhoto="false" />
+        @endif
         <div class="m-auto text-slate-600 flex-grow">
             <h3 class="text-lg font-semibold">
                 {{ $student->first_name }}&nbsp;{{ $student->last_name }}
@@ -19,14 +23,30 @@
             </h3>
             <h4 class="text-slate-400">{{ __('Student') }} {{ __('lvl') }} {{ $student->getLevel() }}</h4>
         </div>
+
+        <form action="{{ route('student.set-photo', $student) }}" method="POST" enctype="multipart/form-data" x-ref="photoForm">
+            @method('PUT')
+            @csrf
+
+            <input type="file" name="photo" id="photo" class="hidden"
+                   accept="image/png, image/jpeg" @change="$refs.photoForm.submit()" />
+
+            <label for="photo"
+                   class="inline-flex items-center justify-center px-4 py-3 border border-transparent rounded-md font-semibold text-xs text-white uppercase text-nowrap tracking-wide bg-gradient-dark hover:scale-105 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-rose-300 /50 focus:ring-offset-2 transition ease-in-out duration-200">
+                {{ __('Upload new photo') }}
+            </label>
+        </form>
+
         @can('admin')
         <x-button-dark class="sm:block hidden" :href="route('student.edit', $student)">{{ __('Edit') }}</x-button-dark>
         @endcan
     </div>
 
+    @can('admin')
     <div class="sm:hidden block mx-4 mb-4">
         <x-button-dark class="m-auto" :href="route('student.edit', $student)">{{ __('Edit') }}</x-button-dark>
     </div>
+    @endcan
 
     <div class="flex sm:flex-row flex-col gap-4 sm:mx-4 mx-0">
         @can('admin')

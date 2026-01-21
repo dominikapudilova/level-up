@@ -52,4 +52,18 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    // async ajax request
+    public function toggleShowPhotos() {
+        $user = Auth::user();
+        $user->show_photos = !$user->show_photos;
+        $user->save();
+
+        if ($user->show_photos === true) {
+            session()->flash('notification', __('Student photos will now be displayed in profiles.'));
+        } else {
+            session()->flash('notification', __('Avatars are now enabled in profiles.'));
+        }
+        return response()->json();
+    }
 }

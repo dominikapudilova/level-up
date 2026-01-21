@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Edugroup;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class StudentController extends Controller
@@ -102,6 +103,22 @@ class StudentController extends Controller
     public function destroy(Student $student)
     {
         //$student->delete();
+    }
+
+    public function setPhoto(Request $request, Student $student) {
+        request()->validate([
+            'photo' => 'required|image|mimes:jpeg,png,jpg|max:2048', // 2mb
+        ]);
+        $path = $request->file('photo')->store('student_photos', 'public');
+
+        if ($student->photo) {
+            // delete old photo
+            Storage::disk('public')->delete($student->photo);
+        }
+        $student->photo = $path;
+        $student->save();
+
+        return redirect()->route('student.show', $student)->with('notification', __('Photo updated successfully.'));
     }
 
     public function updateEdugroups(Request $request, Student $student) {

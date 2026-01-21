@@ -29,8 +29,7 @@
                 <x-button-dark :href="route('kiosk.student.index', $kiosk)" class="w-full">
                     {{ __('Version for students') }}
                 </x-button-dark>
-                <x-button-dark x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-end-session')"
-                               class="w-full">
+                <x-button-dark x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-end-session')" class="w-full">
                     {{ __('End session') }}
                 </x-button-dark>
             </div>
@@ -67,6 +66,7 @@
                        class="hover:underline text-blue-700 float-end">{{ __('Edit attendance') }}</a>
                 </p>
                 <div class="grid grid-cols-2 sm:grid-cols-6 gap-4">
+                    @php $showPhotos = $kiosk->teacher->showPhotos(); @endphp
                     @foreach($students as $student)
                         @include('student.partials.student-card')
                     @endforeach

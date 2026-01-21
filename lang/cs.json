@@ -60,8 +60,6 @@
     "Level": "Úroveň",
     "Cannot start a class with zero students.": "Nelze zahájit hodinu s nulovým počtem žáků.",
     "This class did not start today or it has already ended.": "Tato hodina buď nezačala dnes nebo již skončila.",
-    "Continue lesson": "Pokračovat v hodině",
-    "View all active kiosk sessions": "Prohlížet všechny probíhající hodiny",
     "No sessions were found.": "Nebyla nalezena žádná započatá hodina.",
     "Started at": "Začátek v",
     "Enter": "Vstoupit",
@@ -268,6 +266,13 @@
     "No groups were found! Create a new one.": "Žádné skupiny nebyly nalezeny! Vytvořte novou.",
     "You have not given any knowledge during this session.": "V průběhu této hodiny jste neudělili žádné znalosti.",
     "Not assigned to any groups.": "Nezařazen do žádných skupin.",
+    "Show photos": "Ukazovat fotografie",
+    "Upload new photo": "Nahrát novou fotografii",
+    "Photo updated successfully.": "Fotografie byla úspěšně aktualizována.",
+    "Student photos will now be displayed in student profiles.": "Nyní se budou v profilech žáků zobrazovat fotografie.",
+    "Avatars are now enabled in student profiles.": "Nyní se budou v profilech žáků zobrazovat avatary.",
+    ":name's profile photo": "Profilová fotografie uživatele :name",
+    "Resume kiosk session": "Pokračovat v hodině",
     "Back": "Zpět",
     "Update": "Aktualizovat"
 }

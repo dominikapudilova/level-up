@@ -48,7 +48,7 @@
                                     .includes(searchedName.toLowerCase())">
                             <td>
                                 <div class="inline-block align-middle">
-                                    <x-student-profile-pic :student="$student" class="me-1 w-6 h-6 align-middle"/>
+                                    <x-student-profile-pic :student="$student" :showPhoto="auth()->user()->showPhotos()" class="me-1 max-w-8 max-h-8 align-middle rounded-t rounded-b"/>
                                 </div>
                                 <a class="hover:underline"
                                    href="{{ route('student.show', $student) }}">{{ $student->first_name }} {{ $student->last_name }}</a>

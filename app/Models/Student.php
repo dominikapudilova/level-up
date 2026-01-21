@@ -15,6 +15,7 @@ class Student extends Model
         'birth_date',
         'nickname',
         'access_pin',
+        'photo',
         'avatar',
         'background_image',
         'exp',

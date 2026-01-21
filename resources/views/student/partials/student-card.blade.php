@@ -9,7 +9,7 @@
 
     <div class="absolute top-0 left-0 right-0 bottom-0 text-center">
         <div class="max-w-20 max-h-20 mx-auto mt-3 mb-1 aspect-square rounded-full bg-white overflow-hidden">
-            <x-student-profile-pic :student="$student" :nobg="true" class="w-full h-full object-cover"/>
+            <x-student-profile-pic :student="$student" :nobg="true" :showPhoto="isset($showPhotos) && $showPhotos === true" class="w-full h-full object-cover"/>
         </div>
         <p class="truncate">
             @if(isset($showNickname) && $showNickname)

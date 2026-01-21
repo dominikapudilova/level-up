@@ -25,7 +25,8 @@ class User extends Authenticatable
         'email',
         'password',
         'pin',
-        'avatar'
+        'avatar',
+        'show_photos'
     ];
 
     /**
@@ -53,5 +54,9 @@ class User extends Authenticatable
 
     public function isAdmin(): bool {
         return $this->is_admin;
+    }
+
+    public function showPhotos(): bool {
+        return $this->show_photos;
     }
 }
