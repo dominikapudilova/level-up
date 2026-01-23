@@ -273,6 +273,10 @@
     "Avatars are now enabled in student profiles.": "Nyní se budou v profilech žáků zobrazovat avatary.",
     ":name's profile photo": "Profilová fotografie uživatele :name",
     "Resume kiosk session": "Pokračovat v hodině",
+    "Gained knowledge in this group": "Získané znalosti v této skupině",
+    "As long as a single student received the knowledge at given level, it will be displayed here. Student count is in parentheses.": "Pokud alespoň jeden žák získal znalost na dané úrovni, bude zde zobrazena. Počet žáků je uveden v závorkách.",
+    "No gained knowledge within this group yet.": "Zatím v této skupině nejsou žádné znalosti.",
+    "Filter by knowledge name": "Filtrovat podle názvu znalosti",
     "Back": "Zpět",
     "Update": "Aktualizovat"
 }

@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Edugroup;
 use App\Http\Controllers\Controller;
+use App\Models\KioskSession;
+use App\Models\KnowledgeStudent;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class EdugroupController extends Controller
 {
@@ -69,10 +72,71 @@ class EdugroupController extends Controller
      */
     public function edit(Edugroup $edugroup)
     {
+        // get all knowledge gained per edufield
+        $studentIds = $edugroup->students()->pluck('students.id'); // get student list
+
+        $rows = DB::table('knowledge_student')
+            ->whereIn('student_id', $studentIds)
+            ->join('knowledge', 'knowledge.id', '=', 'knowledge_student.knowledge_id')
+            ->join('knowledge_levels', 'knowledge_levels.id', '=', 'knowledge_student.level_id')
+            ->join('subcategories', 'subcategories.id', '=', 'knowledge.subcategory_id')
+            ->join('categories', 'categories.id', '=', 'subcategories.category_id')
+            ->join('edufields', 'edufields.id', '=', 'categories.edufield_id')
+            ->select([
+                'edufields.id as edufield_id',
+                'edufields.name as edufield_name',
+                'edufields.code_name as edufield_code',
+
+                'categories.id as category_id',
+                'categories.name as category_name',
+
+                'subcategories.id as subcategory_id',
+                'subcategories.name as subcategory_name',
+
+                'knowledge.id as knowledge_id',
+                'knowledge.name as knowledge_name',
+                'knowledge.code_name as knowledge_code',
+
+
+                'knowledge_levels.id as level_id',
+                'knowledge_levels.icon as level_icon',
+                'knowledge_levels.name as level_name',
+                'knowledge_levels.weight as level_weight',
+
+                DB::raw('COUNT(DISTINCT knowledge_student.student_id) as students_count'),
+            ])
+            ->groupBy(
+                'edufields.id',
+                'edufields.name',
+                'edufields.code_name',
+
+                'categories.id',
+                'categories.name',
+
+                'subcategories.id',
+                'subcategories.name',
+
+                'knowledge.id',
+                'knowledge.name',
+                'knowledge.code_name',
+
+                'knowledge_levels.id',
+                'knowledge_levels.icon',
+                'knowledge_levels.name',
+                'knowledge_levels.weight'
+            )
+            ->orderBy('edufields.code_name')
+            ->orderBy('knowledge.code_name')
+            ->orderBy('knowledge_levels.weight')
+            ->distinct()
+            ->get();
+
+        $gainedKnowledge = $rows->groupBy('edufield_id');
+
         return view('edugroup.edit', [
             'edugroup' => $edugroup,
             'students' => Student::all()->sortBy('last_name'),
-//            'teachers' => User::all()
+            'gainedKnowledge' => $gainedKnowledge,
         ]);
     }
 

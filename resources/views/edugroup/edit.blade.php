@@ -89,5 +89,44 @@
         </x-card>
     </div>
 
+    <div class="mt-4 sm:mx-4" x-data="{ searchedKnowledge: '' }">
+        <x-card class="text-sm w-full sm:mx-0">
+            <div class="flex sm:flex-row flex-col content-between w-full gap-2">
+                <div class="w-full grow">
+                    <h5 class="text-slate-600 text-base">{{ __('Gained knowledge in this group') }}</h5>
+                    <p class="text-slate-400">{{ __('As long as a single student received the knowledge at given level, it will be displayed here. Student count is in parentheses.') }}</p>
+                </div>
+
+                <div class="sm:w-auto w-full shrink sm:min-w-64">
+                    <div class="w-full flex justify-between">
+                        <x-input-label for="search-knowledge" class="inline-block">{{ __('Filter by knowledge name') }}</x-input-label>
+                        <span class="text-xs cursor-pointer hover:underline text-blue-700 " @click="searchedKnowledge = ''">{{ __('Clear') }}</span>
+                    </div>
+                    <x-input-text class="w-full" id="search-knowledge" x-model="searchedKnowledge"/>
+                </div>
+            </div>
+
+            @forelse($gainedKnowledge as $edufield)
+                <h6 class="font-semibold text-slate-700 mt-4 mb-2">{{ $edufield->first()->edufield_name }}</h6>
+                @foreach($edufield as $knowledge)
+                    <div x-show="searchedKnowledge === '' ||
+                                 '{{ $knowledge->knowledge_name }}'
+                                    .toLowerCase()
+                                    .includes(searchedKnowledge.toLowerCase())">
+                        <img src="{{ asset('assets/img/knowledge-icons/' . $knowledge->level_icon) }}" alt="{{ $knowledge->level_name }}" title="{{ $knowledge->level_name }}" class="w-4 h-4 me-1 inline-block">
+                        <a class="hover:underline" href="{{ route('category.edit', $knowledge->category_id) }}">{{ $knowledge->category_name }}</a> >
+                        <a class="hover:underline" href="{{ route('subcategory.edit', $knowledge->subcategory_id) }}">{{ $knowledge->subcategory_name }}</a> >
+                        <a class="hover:underline" href="{{ route('knowledge.edit', $knowledge->knowledge_id) }}">{{ $knowledge->knowledge_name }}</a>
+
+                        <span class="text-slate-400 text-sm ms-2">({{ $knowledge->students_count }})</span>
+                    </div>
+                @endforeach
+            @empty
+                {{ __('No gained knowledge within this group yet.') }}
+            @endforelse
+
+        </x-card>
+    </div>
+
 
 </x-app-layout>

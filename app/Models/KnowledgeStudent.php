@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class KnowledgeStudent extends Pivot
@@ -14,17 +15,17 @@ class KnowledgeStudent extends Pivot
         'issued_by',
     ];
 
-    public function level() :\Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function level() : BelongsTo
     {
         return $this->belongsTo(KnowledgeLevel::class, 'level_id');
     }
 
-    public function knowledge() :\Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function knowledge() : BelongsTo
     {
         return $this->belongsTo(Knowledge::class, 'knowledge_id');
     }
 
-    public function student() :\Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function student() : BelongsTo
     {
         return $this->belongsTo(Student::class, 'student_id');
     }

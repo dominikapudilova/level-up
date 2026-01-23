@@ -60,9 +60,9 @@ class ProfileController extends Controller
         $user->save();
 
         if ($user->show_photos === true) {
-            session()->flash('notification', __('Student photos will now be displayed in profiles.'));
+            session()->flash('notification', __('Student photos will now be displayed in student profiles.'));
         } else {
-            session()->flash('notification', __('Avatars are now enabled in profiles.'));
+            session()->flash('notification', __('Avatars are now enabled in student profiles.'));
         }
         return response()->json();
     }
