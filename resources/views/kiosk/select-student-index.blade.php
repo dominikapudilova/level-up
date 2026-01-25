@@ -23,10 +23,20 @@
         <section class="bg-white p-6 sm:rounded-2xl mt-6 shadow-md">
 
             <div class="grid sm:grid-cols-6 grid-cols-2 gap-4 mt-4">
-                @foreach($students as $student)
-                    <div class="cursor-pointer"
-                         x-on:click.prevent="$dispatch('open-modal', 'confirm-student-pin'); selectedStudentRoute = '{{ route('kiosk.student.edit', [$kiosk, $student]) }}'; selectedStudentName = '{{ $student->nickname }}'">
-                        @include('student.partials.student-card', ['showNickname' => true])
+                @foreach($currentStudents as $row)
+                    @php $student = $row->student @endphp
+                    <div>
+                        <div class="cursor-pointer" x-on:click.prevent="$dispatch('open-modal', 'confirm-student-pin'); selectedStudentRoute = '{{ route('kiosk.student.edit', [$kiosk, $student]) }}'; selectedStudentName = '{{ $student->nickname }}'">
+                            @include('student.partials.student-card', [ 'showNickname' => true ])
+                        </div>
+                        <ul class="text-start ms-2 mt-3 text-slate-600 text-sm space-y-1.5">
+                            @foreach($row->knowledge as $knowledge)
+                                <li class="w-full flex flex-row leading-none gap-1 items-center">
+                                    <img src="{{ asset('assets/img/knowledge-icons/' . $knowledge->level_icon) }}" alt="{{ $knowledge->level_name }}" title="{{ $knowledge->level_name }}" class="w-5 h-5 inline-block">
+                                    <span>{{ $knowledge->knowledge_name }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
                     </div>
                 @endforeach
             </div>

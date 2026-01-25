@@ -38,8 +38,8 @@ class StudentController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'first_name' => ['required', 'alpha_dash', 'max:255'],
-            'last_name' => ['required', 'alpha_dash', 'max:255'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
             'nickname' => ['required', 'alpha_dash', 'min:4', 'max:50', 'unique:students,nickname'],
             'birth_date' => ['required', 'date', Rule::date()->beforeToday()],
             'access_pin' => ['required', 'integer:strict', 'digits:4'],
@@ -84,8 +84,8 @@ class StudentController extends Controller
     public function update(Request $request, Student $student)
     {
         $validated = $request->validate([
-            'first_name' => ['required', 'alpha_dash', 'max:255'],
-            'last_name' => ['required', 'alpha_dash', 'max:255'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
             'nickname' => ['required', 'alpha_dash', 'min:4', 'max:50', Rule::unique('students')->ignore($student)],
             'birth_date' => ['required', 'date'],
             'access_pin' => ['required', 'integer:strict', 'digits:4'],

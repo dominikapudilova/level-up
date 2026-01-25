@@ -52,7 +52,6 @@ class KioskController extends Controller
         $validated = $request->validate([
             'edugroup_id' => 'required|exists:edugroups,id',
             'course_id' => 'required|exists:courses,id',
-            // other validation rules as needed
         ]);
 
         $edugroup = Edugroup::findOrFail($validated['edugroup_id']);
@@ -68,10 +67,6 @@ class KioskController extends Controller
             'teacher_id' => auth()->id(),
             'started_at' => now(),
         ]);
-
-        // start kiosk session (logout current user, store kiosk session id in session)
-//        $teacherId = auth()->user();
-//        $this->startKioskSession($request, $kiosk, $teacherId);
 
         return redirect()->route('kiosk.attendance', $kiosk); //->with('notification', 'Kiosk session created successfully.');
     }
@@ -102,11 +97,6 @@ class KioskController extends Controller
 
     public function endSession(Request $request, KioskSession $kiosk) {
         $teacher = User::findOrFail($kiosk->teacher_id);
-
-        // if ending currently running session, forget. Otherwise, it is just ending an older session.
-        /*if (session('kiosk_session_id') == $kiosk->id) {
-            session()->forget('kiosk_session_id');
-        }*/
 
         // validate and check user's PIN
         $validated = $request->validate([
@@ -142,9 +132,6 @@ class KioskController extends Controller
             $courses = $this->getCoursesForEdugroup($query);
             return response()->json($courses);
         }
-
-        // search courses by something else?
-        // ...
 
         return response()->json([]);
     }
@@ -219,6 +206,10 @@ class KioskController extends Controller
                 ->withErrors(__('Cannot start a class with zero students.'));
         }
 
+        // get gained knowledge in this current edugroup and current course
+        $gainedKnowledge = $this->getGainedKnowledgeInEdugroupInCourse($kiosk->edugroup, $kiosk->course->id);
+        $gainedKnowledge = $gainedKnowledge->groupBy('edufield_id');
+
         // start...
         $this->startKioskSession($request, $kiosk, auth()->id());
 
@@ -228,13 +219,14 @@ class KioskController extends Controller
             'students' => $attendance->pluck('student')->sortBy('last_name'),
             'edugroup' => $kiosk->edugroup,
             'course' => $kiosk->course,
-//            'edufields' => Edufield::orderBy('name')->get(),
             'edufields' => $this->collectEdufieldsFromCourseKnowledge($kiosk->course),
+            'knowledges' => $kiosk->course->knowledge,
             'knowledgeLevels' => KnowledgeLevel::all(),
             'history' => KnowledgeStudent::where('kiosk_id', $kiosk->id)
                 ->with(['knowledge', 'level', 'student'])
                 ->orderBy('created_at', 'desc')
                 ->get(),
+            'gainedKnowledge' => $gainedKnowledge,
         ]);
     }
 
@@ -263,18 +255,74 @@ class KioskController extends Controller
             ->values();
     }
 
-    private function startKioskSession(Request $request, KioskSession $kiosk, $userId) { // todo: upravit?
+    private function getGainedKnowledgeInEdugroupInCourse(Edugroup $edugroup, $courseId) {
+        $studentIds = $edugroup->students()->pluck('students.id'); // get student list
+        return DB::table('knowledge_student')
+            ->whereIn('student_id', $studentIds)
+            ->whereExists(function ($q) use ($courseId) {
+                $q->select(DB::raw(1))
+                    ->from('course_knowledge')
+                    ->whereColumn('course_knowledge.knowledge_id', 'knowledge_student.knowledge_id')
+                    ->where('course_knowledge.course_id', $courseId);
+            })
+            ->join('knowledge', 'knowledge.id', '=', 'knowledge_student.knowledge_id')
+            ->join('knowledge_levels', 'knowledge_levels.id', '=', 'knowledge_student.level_id')
+            ->join('subcategories', 'subcategories.id', '=', 'knowledge.subcategory_id')
+            ->join('categories', 'categories.id', '=', 'subcategories.category_id')
+            ->join('edufields', 'edufields.id', '=', 'categories.edufield_id')
+            ->select([
+                'edufields.id as edufield_id',
+                'edufields.name as edufield_name',
+                'edufields.code_name as edufield_code',
+
+                'categories.id as category_id',
+                'categories.name as category_name',
+
+                'subcategories.id as subcategory_id',
+                'subcategories.name as subcategory_name',
+
+                'knowledge.id as knowledge_id',
+                'knowledge.name as knowledge_name',
+                'knowledge.code_name as knowledge_code',
+
+
+                'knowledge_levels.id as level_id',
+                'knowledge_levels.icon as level_icon',
+                'knowledge_levels.name as level_name',
+                'knowledge_levels.weight as level_weight',
+
+                DB::raw('COUNT(DISTINCT knowledge_student.student_id) as students_count'),
+            ])
+            ->groupBy(
+                'edufields.id',
+                'edufields.name',
+                'edufields.code_name',
+
+                'categories.id',
+                'categories.name',
+
+                'subcategories.id',
+                'subcategories.name',
+
+                'knowledge.id',
+                'knowledge.name',
+                'knowledge.code_name',
+
+                'knowledge_levels.id',
+                'knowledge_levels.icon',
+                'knowledge_levels.name',
+                'knowledge_levels.weight'
+            )
+            ->orderBy('edufields.code_name')
+            ->orderBy('knowledge.code_name')
+            ->orderBy('knowledge_levels.weight')
+            ->distinct()
+            ->get();
+    }
+
+    private function startKioskSession() {
         // log user out
         Auth::guard('web')->logout();
-//        $request->session()->invalidate();
-//        $request->session()->regenerateToken();
-//        $request->session()->regenerate();
-
-        // save info to session -> it is already saved in the kiosk object
-//        $request->session()->put('kiosk_session_id', $kiosk->id);
-//        $request->session()->put('teacher_id', $userId);
-//        session(['kiosk_session_id' => $kiosk->id]);
-//        session(['teacher_id' => $userId]);
     }
 
     public function giveKnowledge(Request $request, KioskSession $kiosk) {
@@ -355,14 +403,57 @@ class KioskController extends Controller
 
     // pages for students ...
     public function selectStudentIndex(Request $request, KioskSession $kiosk) {
-        $attendance = Attendance::where('kiosk_session_id', $kiosk->id)
-            ->with('student')
-            ->get();
-
         session(['kiosk_student_auth' => null]);
 
+        // get knowledge for students in this kiosk session
+        $studentIds = Attendance::where('kiosk_session_id', $kiosk->id)
+            ->pluck('student_id')
+            ->sortBy('last_name');
+
+        $highestLevels = DB::table('knowledge_student as ks')
+            ->join('knowledge_levels as kl', 'kl.id', '=', 'ks.level_id')
+            ->whereIn('ks.student_id', $studentIds)
+            ->select([
+                'ks.student_id',
+                'ks.knowledge_id',
+                DB::raw('MAX(kl.weight) as max_weight'),
+            ])
+            ->groupBy('ks.student_id', 'ks.knowledge_id');
+
+        $knowledgeByStudent = DB::table('knowledge_student as ks')
+            ->join('knowledge_levels as kl', 'kl.id', '=', 'ks.level_id')
+            ->joinSub($highestLevels, 'max_levels', function ($join) {
+                $join->on('ks.student_id', '=', 'max_levels.student_id')
+                    ->on('ks.knowledge_id', '=', 'max_levels.knowledge_id')
+                    ->on('kl.weight', '=', 'max_levels.max_weight');
+            })
+            ->join('knowledge', 'knowledge.id', '=', 'ks.knowledge_id')
+            ->select([
+                'ks.student_id',
+
+                'knowledge.id as knowledge_id',
+                'knowledge.name as knowledge_name',
+
+                'kl.id as level_id',
+                'kl.name as level_name',
+                'kl.weight as level_weight',
+                'kl.icon as level_icon',
+            ])
+            ->orderBy('kl.weight', 'desc')
+            ->orderBy('knowledge.name')
+            ->get()
+            ->groupBy('student_id');
+
+        $attendance = Attendance::where('kiosk_session_id', $kiosk->id)
+            ->with('student')
+            ->get()
+            ->map(function ($row) use ($knowledgeByStudent) {
+                $row->knowledge = $knowledgeByStudent[$row->student_id] ?? collect();
+                return $row;
+            });
+
         return view('kiosk.select-student-index', [
-            'students' => $attendance->pluck('student')->sortBy('last_name'),
+            'currentStudents' => $attendance,
             'kiosk' => $kiosk,
         ]);
     }

@@ -79,7 +79,7 @@
                 <p class="text-center mb-2">{{ __('Select knowledge') }}
                     <template x-if="selectedKnowledge"><i class="fa-solid fa-circle-check"></i></template>
                 </p>
-                <x-knowledge-tree :edufields="$edufields" :mode="'kiosk'" :formName="'give-knowledge'"/>
+                <x-knowledge-tree :edufields="$edufields" :knowledges="$knowledges" :mode="'kiosk'" :formName="'give-knowledge'"/>
             </x-card>
         </div>
 
@@ -163,7 +163,7 @@
 
         <div x-cloak x-show="selectedTab === 2">
             <x-card>
-                <p class="text-center mb-2">{{ __('History of given knowledge during this session') }}</p>
+                <p class="text-center mb-2">{{ __('Knowledge given during this session') }}</p>
                 <ul>
                     @forelse($history as $log)
                         <li class="w-full">
@@ -174,7 +174,7 @@
                             &middot;
                             {{ $log->knowledge->name }}
                             &middot;
-                            <img src="{{ asset('assets/img/knowledge-icons/' . $log->level->icon) }}" alt="{{ $log->level->name }}" class="w-6 h-6 inline-block">
+                            <img src="{{ asset('assets/img/knowledge-icons/' . $log->level->icon) }}" alt="{{ $log->level->name }}" title="{{ $log->level->name }}" class="w-6 h-6 inline-block">
                             &middot;
                             <span class="text-slate-400 text-end">{{ \Carbon\Carbon::create($log->updated_at)->format('H:i d.m.') }}</span>
                         </li>
@@ -183,28 +183,26 @@
                     @endforelse
                 </ul>
             </x-card>
-        </div>
+            <x-card class="mt-4">
+                <p class="text-center">{{ __('Knowledge given during all sessions') }} &ndash; {{ $kiosk->course->name }}</p>
+                <p class="text-center text-slate-400 text-sm mb-2">{{ __('Only knowledge relevant to this course is displayed. Other knowledge from other courses is filtered out. Student count is in parentheses.') }}</p>
+                @forelse($gainedKnowledge as $edufield)
+                    <h6 class="font-semibold text-slate-700 mt-4 mb-2">{{ $edufield->first()->edufield_name }}</h6>
+                    @foreach($edufield as $knowledge)
+                        <div>
+                            <img src="{{ asset('assets/img/knowledge-icons/' . $knowledge->level_icon) }}" alt="{{ $knowledge->level_name }}" title="{{ $knowledge->level_name }}" class="w-4 h-4 me-1 inline-block">
+                            <a class="hover:underline" href="{{ route('category.edit', $knowledge->category_id) }}">{{ $knowledge->category_name }}</a> >
+                            <a class="hover:underline" href="{{ route('subcategory.edit', $knowledge->subcategory_id) }}">{{ $knowledge->subcategory_name }}</a> >
+                            <a class="hover:underline" href="{{ route('knowledge.edit', $knowledge->knowledge_id) }}">{{ $knowledge->knowledge_name }}</a>
 
-        {{--<x-card>
-            <p class="text-center mb-2">{{ __('Summary') }}</p>
-            <div class="grid sm:grid-cols-3">
-                <div class="border border-slate-200 rounded-lg p-2">
-                    <p class="text-center font-semibold">{{ __('Selected students') }}</p>
-                    <ul>
-                        <template x-for="studentId in selectedStudents" :key="'input-'+studentId">
-                            <li x-text="studentId"></li>
-                        </template>
-                    </ul>
-                </div>
-                <div class="border border-slate-200 rounded-lg p-2">
-                    <p class="text-center font-semibold">{{ __('Selected knowledge') }}</p>
-                    <p x-text="this.selectedKnowledge"></p>
-                </div>
-                <div class="border border-slate-200 rounded-lg p-2">
-                    <p class="text-center font-semibold">{{ __('Selected level') }}</p>
-                </div>
-            </div>
-        </x-card>--}}
+                            <span class="text-slate-400 text-sm ms-2">({{ $knowledge->students_count }})</span>
+                        </div>
+                    @endforeach
+                @empty
+                    {{ __('No gained knowledge within this group yet.') }}
+                @endforelse
+            </x-card>
+        </div>
 
         <x-modal name="confirm-give-knowledge" :show="$errors->confirmGiveKnowledge->has('pin')" focusable>
             <form id="give-knowledge" action="{{ route('kiosk.give-knowledge', $kiosk) }}" method="POST"

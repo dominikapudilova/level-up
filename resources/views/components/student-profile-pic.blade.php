@@ -21,7 +21,7 @@
 
 @else
     @php
-    $img = $img ?? ($student->avatar ?? 'YOUR-TEXT');
+    $img = $img ?? ($student->avatar ?? 'YOUR-TEXT.png');
     $bg = $bg ?? $student->background_image;
     $theme = $theme ?? ($student->theme ?? 'dark');
     @endphp

@@ -51,7 +51,11 @@
                                    href="{{ route('user.show', $user) }}">{{ $user->first_name }} {{ $user->last_name }}</a>
                             </td>
                             <td>{{ $user->username }}</td>
-                            <td>{{ $user->isAdmin() }}</td>
+                            <td>
+                                @if($user->isAdmin())
+                                    <i class="fa-solid fa-check"></i>
+                                @endif
+                            </td>
                         </tr>
                     @endforeach
                     </tbody>

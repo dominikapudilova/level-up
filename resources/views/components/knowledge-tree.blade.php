@@ -70,34 +70,36 @@
                                         <div x-show="subcategoryExpanded" x-collapse>
                                             <div class="border border-slate-200 rounded-md p-1 ps-4">
                                                 @forelse($subcategory->knowledge as $knowledge)
-                                                    @if($mode === 'kiosk')
-                                                        <div class=" cursor-pointer hover:bg-slate-100 rounded-md" @click="selectedKnowledge = {{ $knowledge->id }}" >
-                                                    @endif
+                                                    @if($knowledges !== null && $knowledges->contains($knowledge) || $knowledges === null)
+                                                        @if($mode === 'kiosk')
+                                                            <div class=" cursor-pointer hover:bg-slate-100 rounded-md" @click="selectedKnowledge = {{ $knowledge->id }}" >
+                                                        @endif
 
-                                                    <div class="flex items-center gap-2 p-2 rounded-md ">
-                                                        <i class="fa-solid fa-graduation-cap"></i>
-                                                        <div>
-                                                            <span class="text-xs uppercase text-slate-400">{{ __('Knowledge') }}</span>
-                                                            <h6 class="text-slate-600 text-lg sm:text-nowrap leading-none">{{ $knowledge->name }}</h6>
+                                                        <div class="flex items-center gap-2 p-2 rounded-md ">
+                                                            <i class="fa-solid fa-graduation-cap"></i>
+                                                            <div>
+                                                                <span class="text-xs uppercase text-slate-400">{{ __('Knowledge') }}</span>
+                                                                <h6 class="text-slate-600 text-lg sm:text-nowrap leading-none">{{ $knowledge->name }}</h6>
+                                                            </div>
+                                                            <span class="text-slate-400 text-xs leading-none self-end">{{ $knowledge->courses->count() }}</span>
+                                                            <div class="grow"></div>
+                                                            @if($mode !== 'kiosk')
+                                                                <x-button-outline :href="route('knowledge.edit', [$knowledge, 'course' => $course])">
+                                                                    <i class="fa-solid fa-wrench"></i>
+                                                                </x-button-outline>
+                                                            @endif
+                                                            @if($course && $mode !== 'kiosk')
+                                                                <label for="knowledge-{{$knowledge->id}}" class="hidden">{{ $knowledge->name }}</label>
+                                                                <input form="{{ $formName }}" id="knowledge-{{$knowledge->id}}" type="checkbox" name="knowledge[]" value="{{ $knowledge->id }}" @checked($isChecked($course, $knowledge))>
+                                                            @elseif($mode === 'kiosk')
+                                                                <label for="knowledge-{{$knowledge->id}}" class="hidden">{{ $knowledge->name }}</label>
+                                                                <input form="{{ $formName }}" id="knowledge-{{$knowledge->id}}" type="radio" name="knowledge_id" value="{{ $knowledge->id }}" x-model="selectedKnowledge">
+                                                            @endif
                                                         </div>
-                                                        <span class="text-slate-400 text-xs leading-none self-end">{{ $knowledge->courses->count() }}</span>
-                                                        <div class="grow"></div>
-                                                        @if($mode !== 'kiosk')
-                                                            <x-button-outline :href="route('knowledge.edit', [$knowledge, 'course' => $course])">
-                                                                <i class="fa-solid fa-wrench"></i>
-                                                            </x-button-outline>
-                                                        @endif
-                                                        @if($course && $mode !== 'kiosk')
-                                                            <label for="knowledge-{{$knowledge->id}}" class="hidden">{{ $knowledge->name }}</label>
-                                                            <input form="{{ $formName }}" id="knowledge-{{$knowledge->id}}" type="checkbox" name="knowledge[]" value="{{ $knowledge->id }}" @checked($isChecked($course, $knowledge))>
-                                                        @elseif($mode === 'kiosk')
-                                                            <label for="knowledge-{{$knowledge->id}}" class="hidden">{{ $knowledge->name }}</label>
-                                                            <input form="{{ $formName }}" id="knowledge-{{$knowledge->id}}" type="radio" name="knowledge_id" value="{{ $knowledge->id }}" x-model="selectedKnowledge">
-                                                        @endif
-                                                    </div>
-                                                    <p class="px-1">{{ $knowledge->description }}</p>
+                                                        <p class="px-1">{{ $knowledge->description }}</p>
 
-                                                    @if($mode === 'kiosk')</div>@endif
+                                                        @if($mode === 'kiosk')</div>@endif
+                                                    @endif
                                                 @empty
                                                     <p class="text-slate-400">{{ __('There are no knowledge units in this subcategory field. Create one.') }}</p>
                                                 @endforelse

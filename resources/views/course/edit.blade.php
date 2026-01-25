@@ -102,12 +102,12 @@
     </x-card>
 
     <x-card class="m-4">
-        <div class="flex items-center mb-4">
+        <div class="flex items-center">
             <h5 class="text-slate-600 text-base">{{ __('Manage knowledge') }}</h5>
             <div class="grow"></div>
             <x-button-outline :href="route('edufield.create', ['course' => $course])"><i class="fa-solid fa-plus"></i></x-button-outline>
         </div>
-
+        <p class="text-slate-400 text-sm mb-2">{{ __('Numbers next to each of the category show amount of items inside. Numbers next to knowledge show how many courses it is used in.') }}</p>
         <x-knowledge-tree :edufields="$edufields" :mode="'edit'" :course="$course" :formName="'update-knowledge'"/>
 
         <form method="POST" id="update-knowledge" action="{{ route('course.update-knowledge', $course) }}">

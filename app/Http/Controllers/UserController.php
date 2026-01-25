@@ -64,9 +64,6 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        if (!Gate::allows('admin')) {
-            abort(403);
-        }
         return view('user.edit', [
             'user' => $user
         ]);
@@ -86,7 +83,7 @@ class UserController extends Controller
             'is_admin' => ['boolean'],
         ]);
 
-        if (auth()->user() == $user && (isset($validated['isAdmin']) && $validated['isAdmin'] == false)) {
+        if (auth()->user() == $user && (isset($validated['is_admin']) && $validated['is_admin'] == false)) {
             return redirect()->route('user.edit', $user)->withErrors(__('You cannot remove your own administrator rights.'));
         }
 

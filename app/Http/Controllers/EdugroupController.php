@@ -174,18 +174,18 @@ class EdugroupController extends Controller
         ]);
 
         // check that a student is not already in a core class
-        if ($edugroup->core) {
+        if ($edugroup->core && isset($validated['students'])) {
             foreach ($validated['students'] as $studentId) {
                 $student = Student::findOrFail($studentId);
 
                 // Check if the student is already in a core class
-                $alreadyInCore = $student->edugroups()
+                $coreGroup = $student->edugroups()
                     ->where('core', true)
                     ->where('edugroup_id', '!=', $edugroup->id) // Exclude the current edugroup
-                    ->exists();
+                    ->first();
 
-                if ($alreadyInCore) {
-                    return back()->withErrors(__('Student :name is already assigned to a core class.', ['name' => $student->first_name . ' ' . $student->last_name]))
+                if ($coreGroup) {
+                    return back()->withErrors(__('Student :name is already assigned to a core class (:class).', ['name' => $student->first_name . ' ' . $student->last_name, 'class' => $coreGroup->name]))
                         ->withInput();
                 }
             }

@@ -13,10 +13,18 @@ return [
     |
     */
 
+    'alpha_dash' => 'Pole :attribute smí obsahovat pouze písmena, čísla, pomlčky a podtržítka.',
     'before' => 'Pole :attribute musí být dřívější datum než :date.',
+    'digits' => 'Pole :attribute musí být přesně :digits číslic.',
+    'integer' => 'Pole :attribute musí být číslo.',
     'max' => [
         'numeric' => 'Pole :attribute nesmí být vyšší než :max.',
     ],
+    'min' => [
+        'string' => 'Pole :attribute musí mít alespoň :min znaků.',
+    ],
+    'required' => 'Pole :attribute musí být vyplněné.',
+    'unique' => 'Pole :attribute je již zabrané.',
 
     /*
     |--------------------------------------------------------------------------
@@ -33,6 +41,9 @@ return [
         'birth_date' => [
             'before' => 'Datum narození musí být dřívější než dnešní datum.',
         ],
+        'nickname' => [
+            'unique' => 'Tato předzdívka je již zabraná. Zvolte prosím jinou.',
+        ],
     ],
 
 
@@ -48,12 +59,10 @@ return [
     */
 
     'attributes' => [
+        'first_name' => 'jméno',
+        'last_name' => 'příjmení',
+        'nickname' => 'přezdívka',
         'birth_date' => 'datum narození',
+        'access_pin' => 'přístupový PIN',
     ],
-
-    /*'values' => [
-        'date' => [
-            'cc' => 'credit card'
-        ],
-    ],*/
 ];

@@ -14,10 +14,10 @@
         <ul class="sm:space-y-2 space-y-1">
             <li><x-button-dark class="w-full" :href="route('kiosk.create')">{{ __('Start lesson') }}</x-button-dark></li>
             <li><x-nav-link class="" :href="route('dashboard')" :active="request()->routeIs('dashboard')">{{ __('Dashboard') }}</x-nav-link></li>
-            <li><x-nav-link class="" :href="route('student.index')" :active="request()->routeIs('student.index')">{{ __('Manage students') }}</x-nav-link></li>
-            <li><x-nav-link class="" :href="route('edugroup.index')" :active="request()->routeIs('edugroup.index')">{{ __('Manage groups') }}</x-nav-link></li>
-            <li><x-nav-link class="" :href="route('course.index')" :active="request()->routeis('course.index')">{{ __('Manage courses') }}</x-nav-link></li>
-            <li><x-nav-link class="" :href="route('knowledge.index')" :active="request()->routeis('knowledge.index')">{{ __('Manage knowledge') }}</x-nav-link></li>
+            <li><x-nav-link class="" :href="route('student.index')" :active="request()->routeIs('student.index')">{{ __('Students') }}</x-nav-link></li>
+            <li><x-nav-link class="" :href="route('edugroup.index')" :active="request()->routeIs('edugroup.index')">{{ __('Groups') }}</x-nav-link></li>
+            <li><x-nav-link class="" :href="route('course.index')" :active="request()->routeis('course.index')">{{ __('Courses') }}</x-nav-link></li>
+            <li><x-nav-link class="" :href="route('knowledge.index')" :active="request()->routeis('knowledge.index')">{{ __('Knowledge units') }}</x-nav-link></li>
             @can('admin')
                 <li>
                     <h6 class="p-2 uppercase text-xs font-normal text-slate-400">{{ __('Administrace') }}</h6>
