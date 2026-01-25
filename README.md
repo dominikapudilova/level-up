@@ -30,6 +30,7 @@ Generate application key with this command: `php artisan key:generate`.
 - `composer install`
 - copy `.env.example` to `.env`
     - set up your database connection in `.env` (DB_NAME, DB_USER, DB_PASSWORD)
+- `php artisan storage:link` (to link storage folder for showing images)
 - `npm run dev` 
 - `php artisan serve`
 
@@ -40,6 +41,7 @@ Generate application key with this command: `php artisan key:generate`.
 - (pull `git pull origin main`)
 - install `composer install --optimize-autoloader --no-dev`
 - migrate `php artisan migrate --force`
+- link `php artisan storage:link`
 - clear caches
   - `php artisan cache:clear`
   - `php artisan config:clear`

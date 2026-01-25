@@ -167,7 +167,7 @@ class EdugroupController extends Controller
 
 
     public function updateStudents(Request $request, Edugroup $edugroup) {
-        // Validate that users[] is an array of existing IDs
+        // Validate that students[] is an array of existing IDs
         $validated = $request->validate([
             'students' => 'array',
             'students.*' => 'exists:students,id',
@@ -191,7 +191,7 @@ class EdugroupController extends Controller
             }
         }
 
-        // Sync updates the pivot table — adds new, removes unchecked
+        // Sync updates the pivot table - adds new, removes unchecked
         $edugroup->students()->sync($validated['students'] ?? []);
 
         return redirect()->route('edugroup.edit', $edugroup)->with('notification', __('Student list updated successfully.'));
