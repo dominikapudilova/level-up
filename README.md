@@ -2,10 +2,10 @@
 
 ## Made from Chirper
 
-Chirper is a simple Twitter clone coming from Laravel Bootcamp built with Laravel, Vite, AplineJS, and Tailwind CSS. It serves as a demonstration of how to build a modern web application using these technologies.
+Chirper is a simple Twitter clone coming from Laravel Bootcamp built with Laravel, Vite, AlpineJS, and Tailwind CSS. It serves as a demonstration of how to build a modern web application using these technologies.
 
 - `composer create-project laravel/laravel my-project`
-  - `cd chirper`
+  - `cd my-project`
 - `composer require laravel/breeze --dev`
 - `php artisan breeze:install blade`
 - `npm install`
@@ -21,7 +21,9 @@ Generate application key with this command: `php artisan key:generate`.
 
 ## Requirements
 - PHP 8.2 - 8.4
-- ...
+- composer 2.7+
+- npm 9+
+- MariaDB 10.4+
 
 ## Install for development
 - clone this repo
@@ -32,7 +34,7 @@ Generate application key with this command: `php artisan key:generate`.
     - set up your database connection in `.env` (DB_NAME, DB_USER, DB_PASSWORD)
 - `php artisan storage:link` (to link storage folder for showing images)
 - `npm run dev` 
-- `php artisan serve`
+- `php artisan serve` 
 
 ## Deployment
 - clone this repo `git clone --depth=1 https://github.com/.../repo.git level-up`
@@ -54,11 +56,26 @@ Generate application key with this command: `php artisan key:generate`.
 - `npm install`
 - `npm run build` or `npm run prod`
 
+### Web server
+- Set up your web server (e.g., Apache, Nginx) to point to the `public` directory of your Laravel application.
+- Apache example:
+```
+<VirtualHost *:80>
+  ...
+  DocumentRoot /var/www/level-up/public
+  RewriteEngine on
+  RewriteCond %{SERVER_NAME} =example.com
+  RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
+  ...
+</VirtualHost>
+```
+
 ## Documentation
 
 - [Laravel docs](https://laravel.com/docs/12.x)
 - [Bootcamp (wayback)](https://web.archive.org/web/20231224155728/https://bootcamp.laravel.com/blade/installation)
-- 
+- [AlpineJS docs](https://alpinejs.dev/start-here)
+- [Tailwind CSS docs](https://tailwindcss.com/docs/installation)
 
 ## License
 

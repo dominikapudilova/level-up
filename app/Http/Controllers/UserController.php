@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
@@ -46,7 +45,7 @@ class UserController extends Controller
 
         User::create($validated);
 
-        return redirect()->route('user.index')->with('notification', 'New user created successfully.');
+        return redirect()->route('user.index')->with('notification', __('New user created successfully.'));
     }
 
     /**
@@ -107,6 +106,6 @@ class UserController extends Controller
         ]);
 
         $user->delete();
-        return redirect()->route('user.index')->with('notification', 'User deleted successfully.');
+        return redirect()->route('user.index')->with('notification', __('User deleted successfully.'));
     }
 }

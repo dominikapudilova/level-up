@@ -40,7 +40,7 @@
                         <x-input-label for="grade">{{ __('Grade') }}</x-input-label>
                         <x-input-text id="grade" class="w-full mt-1" type="number" name="grade" :value="old('grade')"></x-input-text>
                         <x-input-error :messages="$errors->get('grade')" class="mt-2"/>
-                        <p class="mt-2 text-xs text-slate-500 leading-tight">{{ __('Adding a grade will allow the system to connect the group with the current level of the course, even if multiple of the same course but different grade are assigned.') }}</p>
+{{--                        <p class="mt-2 text-xs text-slate-500 leading-tight">{{ __('Adding a grade will allow the system to connect the group with the current level of the course, even if multiple of the same course but different grade are assigned.') }}</p>--}}
                     </div>
 
                     {{--<div>
